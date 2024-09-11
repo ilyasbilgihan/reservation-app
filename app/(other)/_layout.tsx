@@ -8,6 +8,7 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Stack.Screen name="test" />
+      <Stack.Screen name="auth" />
     </Stack>
   );
 }

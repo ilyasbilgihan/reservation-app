@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "kuaforum",
-    "slug": "kuaforum",
+    "name": "Reservation Hub",
+    "slug": "reservation-hub",
     "version": "1.0.0",
 
-    "scheme": "kuaforum",
+    "scheme": "reservation-hub",
     "web": {
       "bundler": "metro",
       "output": "static",

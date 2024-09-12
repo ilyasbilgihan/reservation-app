@@ -6,7 +6,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-const BUCKET_NAME = 'kuaforum';
+const BUCKET_NAME = 'reservation-hub';
 
 export const supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
   auth: {

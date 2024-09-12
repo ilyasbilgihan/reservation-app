@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import Animated, {
   useSharedValue,
@@ -36,7 +36,6 @@ const SignIn = () => {
     email: '',
     password: '',
     confirm_password: '',
-    username: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -85,18 +84,16 @@ const SignIn = () => {
       setLoading(false);
       return;
     }
-    /* const { data, error: profileError } = await supabase.from('profile').insert({
-      username: formData.username,
+    const { data, error: profileError } = await supabase.from('profile').insert({
       id: session?.user.id,
       email: session?.user.email,
-      role: 'admin', // test
     });
 
     if (profileError) {
       console.log('error', profileError.message);
       setLoading(false);
       return;
-    } */
+    }
 
     setLoading(false);
 
@@ -125,6 +122,9 @@ const SignIn = () => {
       </View>
       <ScrollView>
         <View className="gap-4 px-7">
+          <View className="items-center">
+            <Image source={require('~/assets/splash.webp')} className="my-8 h-72 w-72" />
+          </View>
           <View>
             <Label nativeID="email">E-posta</Label>
             <Input

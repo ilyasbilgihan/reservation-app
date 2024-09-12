@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { Redirect, router, useNavigation } from 'expo-router';
-import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import Animated, {
+  useSharedValue,
+  withTiming,
+  Easing,
+  FadeInUp,
+  FadeOutUp,
+} from 'react-native-reanimated';
 import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { supabase } from '~/utils/supabase';
@@ -10,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
+import { Text } from '~/components/ui/text';
 import { getNetworkStateAsync } from 'expo-network';
 
 const SignIn = () => {
@@ -99,7 +106,7 @@ const SignIn = () => {
   const setField = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value });
   };
-  const top = useSharedValue(-50);
+  const paddingTop = useSharedValue(0);
 
   const handleAuth = () => {
     if (formState === 'login') {
@@ -112,10 +119,12 @@ const SignIn = () => {
   return (
     <SafeAreaView>
       <View className="h-16 flex-row items-center justify-center px-7">
-        <Text className="text-2xl">{formState === 'login' ? 'Login' : 'Register'}</Text>
+        <Text animateOnChange className="text-2xl">
+          {formState === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
+        </Text>
       </View>
       <ScrollView>
-        <View className="gap-4 px-7 pb-7">
+        <View className="gap-4 px-7">
           <View>
             <Label nativeID="email">E-posta</Label>
             <Input
@@ -137,48 +146,53 @@ const SignIn = () => {
               aria-errormessage="password"
             />
           </View>
-          {formState === 'register' ? (
-            <Animated.View
-              className="gap-4"
-              style={{
-                top,
-              }}>
-              <View>
-                <Label nativeID="confirm_password">Şifre Tekrar</Label>
-                <Input
-                  placeholder="********"
-                  secureTextEntry
-                  value={formData.confirm_password}
-                  onChangeText={(value) => setField('confirm_password', value)}
-                  aria-labelledby="confirm_password"
-                  aria-errormessage="confirm_password"
-                />
-              </View>
+          <Animated.View className="relative" style={{ paddingTop }}>
+            {formState === 'register' ? (
+              <Animated.View
+                className="absolute w-full gap-4"
+                entering={FadeInUp.duration(500)}
+                exiting={FadeOutUp.duration(250)}>
+                <View>
+                  <Label nativeID="confirm_password">Şifre Tekrar</Label>
+                  <Input
+                    placeholder="********"
+                    secureTextEntry
+                    value={formData.confirm_password}
+                    onChangeText={(value) => setField('confirm_password', value)}
+                    aria-labelledby="confirm_password"
+                    aria-errormessage="confirm_password"
+                  />
+                </View>
+              </Animated.View>
+            ) : null}
+            <View className="gap-4">
               <Button onPress={handleAuth} disabled={loading}>
-                <Text className="text-slate-100">Register</Text>
+                <Text animateOnChange className="text-slate-100">
+                  {formState === 'login' ? 'Giriş' : 'Kayıt Ol'}
+                </Text>
               </Button>
               <TouchableOpacity
                 onPress={() => {
-                  top.value = withSpring(top.value - 50);
-                  setFormState('login');
+                  if (formState === 'login') {
+                    setFormState('register');
+                    paddingTop.value = withTiming(80, {
+                      duration: 500,
+                      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+                    });
+                  } else {
+                    setFormState('login');
+                    paddingTop.value = withTiming(0, {
+                      duration: 500,
+                      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+                    });
+                  }
                 }}>
-                <Text className="text-slate-900">Already have an account?</Text>
+                <Text className="text-slate-900">
+                  {formState === 'login' ? 'Henüz hesabın yok mu?' : 'Zaten bir hesabın var mı?'}
+                </Text>
               </TouchableOpacity>
-            </Animated.View>
-          ) : (
-            <>
-              <Button onPress={handleAuth} disabled={loading}>
-                <Text className="text-slate-100">Login</Text>
-              </Button>
-              <TouchableOpacity
-                onPress={() => {
-                  top.value = withSpring(top.value + 50);
-                  setFormState('register');
-                }}>
-                <Text className="text-slate-900">Don't have an account?</Text>
-              </TouchableOpacity>
-            </>
-          )}
+            </View>
+          </Animated.View>
         </View>
       </ScrollView>
     </SafeAreaView>

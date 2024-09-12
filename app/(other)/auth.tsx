@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Redirect, router, useNavigation } from 'expo-router';
 import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
@@ -10,10 +10,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
+import { getNetworkStateAsync } from 'expo-network';
 
 const SignIn = () => {
   const { session } = useGlobalContext();
-  if (session) return <Redirect href="/" />;
+
+  useEffect(() => {
+    (async () => {
+      const networkState = await getNetworkStateAsync();
+      if (session && networkState.isConnected) {
+        router.replace('/');
+      }
+    })();
+  }, [session]);
 
   const [formState, setFormState] = useState('login');
   const [formData, setFormData] = useState({
@@ -22,7 +31,6 @@ const SignIn = () => {
     confirm_password: '',
     username: '',
   });
-  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
   async function signInWithEmail() {
@@ -122,6 +130,7 @@ const SignIn = () => {
             <Label nativeID="password">Şifre</Label>
             <Input
               placeholder="********"
+              secureTextEntry
               value={formData.password}
               onChangeText={(value) => setField('password', value)}
               aria-labelledby="password"
@@ -138,6 +147,7 @@ const SignIn = () => {
                 <Label nativeID="confirm_password">Şifre Tekrar</Label>
                 <Input
                   placeholder="********"
+                  secureTextEntry
                   value={formData.confirm_password}
                   onChangeText={(value) => setField('confirm_password', value)}
                   aria-labelledby="confirm_password"

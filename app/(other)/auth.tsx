@@ -129,6 +129,7 @@ const SignIn = () => {
             <Label nativeID="email">E-posta</Label>
             <Input
               placeholder="janedoe@mail.com"
+              keyboardType="email-address"
               value={formData.email}
               onChangeText={(value) => setField('email', value)}
               aria-labelledby="email"

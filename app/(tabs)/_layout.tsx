@@ -1,6 +1,7 @@
-import { Link, Redirect, Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
+import { View } from 'react-native';
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { Home } from '~/lib/icons/Home';
+import { Iconify } from '~/lib/icons/Iconify';
 
 export default function TabLayout() {
   const { session } = useGlobalContext();
@@ -10,24 +11,61 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'black',
+        headerTitleAlign: 'center',
+        headerShadowVisible: false,
+        tabBarHideOnKeyboard: true,
+        tabBarIconStyle: {
+          paddingVertical: 0,
+        },
+        tabBarLabelStyle: {
+          height: 20,
+          fontSize: 11,
+        },
+        tabBarStyle: {
+          height: 60,
+          borderColor: '#FAF9FB',
+          backgroundColor: '#FAF9FB',
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ focused }) => (
-            <Home className={focused ? 'text-primary' : 'text-zinc-700'} />
-          ),
+          title: 'Home',
+          headerShown: false,
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Iconify
+                icon="solar:home-2-bold-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ) : (
+              <Iconify
+                icon="solar:home-2-line-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="profile"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ focused }) => (
-            <Home className={focused ? 'text-primary' : 'text-zinc-700'} />
-          ),
+          title: 'Profil',
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Iconify
+                icon="solar:user-bold-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ) : (
+              <Iconify
+                icon="solar:user-line-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ),
         }}
       />
     </Tabs>

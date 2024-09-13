@@ -78,8 +78,8 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="(other)" options={{ headerShown: false }} />
             </Stack>
-            <PortalHost />
           </BottomSheetModalProvider>
+          <PortalHost />
         </GestureHandlerRootView>
       </ThemeProvider>
     </GlobalProvider>

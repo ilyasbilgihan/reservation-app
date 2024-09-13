@@ -7,6 +7,8 @@ import { supabase } from '~/utils/supabase';
 import { getNetworkStateAsync } from 'expo-network';
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '~/context/GlobalProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 
 export default function Home() {
   const { session } = useGlobalContext();
@@ -84,7 +86,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <SafeAreaView>
       <TouchableOpacity onPress={() => supabase.auth.signOut()}>
         <Text className="text-red-500">Logout</Text>
       </TouchableOpacity>
@@ -92,6 +94,6 @@ export default function Home() {
         <Text className="text-4xl text-purple-500">Test DB</Text>
       </TouchableOpacity>
       <Text>{JSON.stringify(data, null, 2)}</Text>
-    </>
+    </SafeAreaView>
   );
 }

@@ -23,6 +23,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Iconify } from '~/lib/icons/Iconify';
 import BranchItem from '~/components/BranchItem';
 
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+
 export default function Profile() {
   const { session, setBranch, branch } = useGlobalContext();
   const [loading, setLoading] = useState(false);
@@ -223,7 +225,7 @@ export default function Profile() {
             entering={FadeInRight.delay(250).duration(250)}
             exiting={FadeOutRight.duration(500)}>
             <View className="flex-row items-center justify-between">
-              <Text className="text-2xl ">Şubelerim</Text>
+              <Text className="font-qs-semibold text-2xl">Şubelerim</Text>
               <CreateBranchModal
                 onCreate={() => {
                   fetchBranches();
@@ -239,7 +241,21 @@ export default function Profile() {
                       if (branch?.id === item.id) {
                         setBranch(null);
                       } else {
-                        setBranch(item);
+                        //@ts-ignore
+                        let lbl = {
+                          Accommodation: 'Konaklama Hizmetleri',
+                          Rental: 'Kiralama Hizmetleri',
+                          Grooming: 'Bakım Hizmetleri',
+                          Food: 'Yemek Hizmetleri',
+                        }[item.sector];
+
+                        setBranch({
+                          ...item,
+                          sector: {
+                            value: item.sector,
+                            label: lbl,
+                          },
+                        });
                       }
                     }}
                     key={item.id}>

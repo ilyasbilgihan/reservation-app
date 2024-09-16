@@ -57,6 +57,13 @@ module.exports = {
         'soft-4': '0px 0px 40px rgba(38, 38, 38, 0.1)',
         'soft-5': '0px 4px 8px 4px rgba(42, 48, 81, 0.2)',
       },
+      fontFamily: {
+        qs: ['Quicksand', 'sans-serif'],
+        'qs-light': ['Quicksand Light', 'sans-serif'],
+        'qs-medium': ['Quicksand Medium', 'sans-serif'],
+        'qs-semibold': ['Quicksand SemiBold', 'sans-serif'],
+        'qs-bold': ['Quicksand Bold', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -18,6 +18,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GlobalProvider } from '~/context/GlobalProvider';
 
+import { useFonts } from 'expo-font';
+
 const LIGHT_THEME: Theme = {
   dark: false,
   colors: NAV_THEME.light,
@@ -39,6 +41,14 @@ export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
+  const [loaded, error] = useFonts({
+    'Quicksand Light': require('../assets/fonts/Quicksand-Light.ttf'),
+    'Quicksand Bold': require('../assets/fonts/Quicksand-Bold.ttf'),
+    'Quicksand Medium': require('../assets/fonts/Quicksand-Medium.ttf'),
+    Quicksand: require('../assets/fonts/Quicksand-Regular.ttf'),
+    'Quicksand SemiBold': require('../assets/fonts/Quicksand-SemiBold.ttf'),
+  });
+
   React.useEffect(() => {
     (async () => {
       const theme = await AsyncStorage.getItem('theme');
@@ -59,12 +69,15 @@ export default function RootLayout() {
         return;
       }
       setIsColorSchemeLoaded(true);
-    })().finally(() => {
-      SplashScreen.hideAsync();
-    });
+    })();
   }, []);
 
-  if (!isColorSchemeLoaded) {
+  React.useEffect(() => {
+    if (error) throw error;
+    if (loaded && isColorSchemeLoaded) SplashScreen.hideAsync();
+  }, [loaded, setIsColorSchemeLoaded]);
+
+  if (!isColorSchemeLoaded || !loaded) {
     return null;
   }
 

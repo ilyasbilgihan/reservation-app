@@ -20,7 +20,11 @@ const Text = React.forwardRef<
     if (!animateOnChange) {
       return (
         <Component
-          className={cn('text-base text-foreground web:select-text', textClass, className)}
+          className={cn(
+            'font-qs-medium text-base text-foreground web:select-text',
+            textClass,
+            className
+          )}
           ref={ref}
           style={style}
           {...props}>

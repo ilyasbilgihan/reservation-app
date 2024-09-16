@@ -14,15 +14,14 @@ export default function TabLayout() {
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         tabBarHideOnKeyboard: true,
-        tabBarIconStyle: {
-          paddingVertical: 0,
-        },
+        tabBarActiveTintColor: 'rgb(87 51 158)',
         tabBarLabelStyle: {
-          height: 20,
-          fontSize: 11,
+          fontSize: 12,
+          fontFamily: 'Quicksand SemiBold',
         },
         tabBarStyle: {
           height: 60,
+          paddingBottom: 10,
           borderColor: '#FAF9FB',
           backgroundColor: '#FAF9FB',
         },
@@ -55,6 +54,7 @@ export default function TabLayout() {
         name="branch"
         options={{
           title: 'Şube',
+          headerShown: false,
           tabBarButton(props) {
             return branch ? <TouchableOpacity {...props} /> : null;
           },

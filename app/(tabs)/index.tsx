@@ -27,7 +27,7 @@ export default function Home() {
       if (branch) {
         router.replace('/branch');
       }
-    }, [])
+    }, [branch])
   );
 
   const [data, setData] = useState<any>(null);

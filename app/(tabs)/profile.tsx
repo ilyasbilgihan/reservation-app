@@ -230,7 +230,11 @@ export default function Profile() {
             exiting={FadeOutRight.duration(500)}>
             <View className="flex-row items-center justify-between">
               <Text className="text-2xl ">Şubelerim</Text>
-              <CreateBranchModal />
+              <CreateBranchModal
+                onCreate={() => {
+                  fetchBranches();
+                }}
+              />
             </View>
             {branches.length > 0 ? (
               <Text>{JSON.stringify(branches, null, 2)}</Text>

@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
+import BottomSheet from './BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import useImagePicker from '~/utils/useImagePicker';
@@ -21,8 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 
-const CreateBranchModal = () => {
+const CreateBranchModal = ({ onCreate }: any) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { image, setImage, pickImage } = useImagePicker();
   const { session } = useGlobalContext();
@@ -35,14 +37,12 @@ const CreateBranchModal = () => {
     city: '',
     location: '',
     thumbnail: '',
-    reservation_period: 0,
-    sector: '',
+    reservation_period: '0',
+    sector: null,
   });
-  const setField = (field: string, value: string) => {
+  const setField = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
   };
-  // variables
-  const snapPoints = useMemo(() => ['50%', '75%'], []);
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
@@ -57,15 +57,74 @@ const CreateBranchModal = () => {
     right: 12,
   };
 
+  const handleCreateBranch = async () => {
+    if (loading) return;
+
+    let phoneValidation = isValidPhone();
+    if (!phoneValidation) {
+      Alert.alert('Error', 'Invalid phone number');
+      return;
+    }
+
+    setLoading(true);
+
+    let uploadedImageUrl = null;
+    if (image !== undefined) {
+      const { url, error } = await uploadImageToSupabaseBucket('branch_thumbnails', image);
+      if (error) {
+        console.log('image upload error', error);
+      } else {
+        uploadedImageUrl = url;
+      }
+    }
+    /* 
+    // if there is a new image or user wants to delete own image
+    if (uploadedImageUrl) {
+      // delete image from bucket
+      const { error } = await deleteImage('avatars/' + tempImage);
+        if (error) {
+          console.log('error deleting image', error);
+        }
+    } */
+
+    const { error } = await supabase.from('branch').insert({
+      name: formData.name,
+      phone: formData.phone,
+      country: formData.country,
+      city: formData.city,
+      location: formData.location,
+      thumbnail: uploadedImageUrl,
+      reservation_period: formData.reservation_period,
+      sector: formData.sector,
+      owner_id: session?.user.id,
+    });
+
+    if (error) {
+      Alert.alert('Error', error.message);
+      console.log('error', error.message);
+    }
+
+    setLoading(false);
+    onCreate();
+    bottomSheetModalRef.current?.dismiss();
+  };
+
+  const isValidPhone = useCallback(() => {
+    // regex to check phone number
+    let regex = /^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/;
+
+    if (regex.test(formData.phone)) {
+      return true;
+    }
+    return false;
+  }, [formData.phone]);
+
   return (
     <>
       <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
         <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
       </TouchableOpacity>
-      <BottomSheetModal
-        backgroundStyle={{ backgroundColor: 'rgb(248 250 252)' }}
-        ref={bottomSheetModalRef}
-        snapPoints={snapPoints}>
+      <BottomSheet ref={bottomSheetModalRef}>
         <BottomSheetView>
           <ScrollView>
             <View className="gap-4 p-7">
@@ -74,7 +133,7 @@ const CreateBranchModal = () => {
                 <TouchableOpacity
                   activeOpacity={0.75}
                   onPress={pickImage}
-                  className="aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-background">
+                  className="aspect-square w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-background">
                   {formData.thumbnail || image ? (
                     <Image
                       source={
@@ -107,13 +166,20 @@ const CreateBranchModal = () => {
               </View>
               <View className="gap-1">
                 <Label nativeID="sector">Sektör</Label>
-                <Select>
+                <Select
+                  onValueChange={(item: any) => {
+                    setField('sector', item.value);
+                  }}>
                   <SelectTrigger>
-                    <SelectValue className="text-stone-400" placeholder="Select a sector" />
+                    <SelectValue
+                      style={{ color: formData.sector != null ? 'black' : 'rgb(163 163 163)' }}
+                      className="text-lg text-muted-foreground "
+                      placeholder="Şubeyle ilgili bir sektör seç"
+                    />
                   </SelectTrigger>
                   <SelectContent insets={contentInsets} className="w-full">
                     <SelectGroup>
-                      <SelectLabel>Sektörler</SelectLabel>
+                      <SelectLabel className="text-stone-400">Sektörler</SelectLabel>
                       <SelectItem label="Bakım Hizmetleri" value="Grooming">
                         Bakım Hizmetleri
                       </SelectItem>
@@ -147,7 +213,7 @@ const CreateBranchModal = () => {
                 <Label nativeID="country">Ülke</Label>
                 <Input
                   placeholder="Türkiye"
-                  value={formData.phone}
+                  value={formData.country}
                   onChangeText={(value) => {
                     setField('country', value);
                   }}
@@ -159,7 +225,7 @@ const CreateBranchModal = () => {
                 <Label nativeID="city">Şehir</Label>
                 <Input
                   placeholder="Denizli"
-                  value={formData.phone}
+                  value={formData.city}
                   onChangeText={(value) => {
                     setField('city', value);
                   }}
@@ -172,7 +238,7 @@ const CreateBranchModal = () => {
                 <Input
                   placeholder="60"
                   keyboardType="numeric"
-                  value={formData.phone}
+                  value={formData.reservation_period}
                   onChangeText={(value) => {
                     setField('reservation_period', value);
                   }}
@@ -184,13 +250,13 @@ const CreateBranchModal = () => {
                 </Text>
               </View>
 
-              <Button onPress={() => {}} disabled={loading}>
-                <Text className="text-slate-100">Kaydet</Text>
+              <Button onPress={handleCreateBranch} disabled={loading}>
+                <Text className="text-slate-100">Oluştur</Text>
               </Button>
             </View>
           </ScrollView>
         </BottomSheetView>
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   );
 };

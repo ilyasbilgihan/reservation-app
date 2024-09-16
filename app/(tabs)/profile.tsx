@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TouchableOpacity, View, Image } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
@@ -9,7 +9,6 @@ import Animated, {
   FadeOutRight,
 } from 'react-native-reanimated';
 import { ScrollView } from 'react-native-gesture-handler';
-import { PortalHost } from '@rn-primitives/portal';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import useImagePicker from '~/utils/useImagePicker';
@@ -22,19 +21,10 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Iconify } from '~/lib/icons/Iconify';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select';
+import BranchItem from '~/components/BranchItem';
 
 export default function Profile() {
-  const { session } = useGlobalContext();
-  const [screenLoading, setScreenLoading] = useState(false);
+  const { session, setBranch, branch } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [branches, setBranches] = useState<any>([]);
   const [tempImage, setTempImage] = useState<any>(null);
@@ -147,12 +137,12 @@ export default function Profile() {
   );
 
   return (
-    <ScrollView>
-      <Tabs
-        value={value}
-        onValueChange={setValue}
-        className="mx-auto w-full max-w-[400px] flex-col gap-1.5 px-7">
-        <TabsList className="w-full flex-row">
+    <Tabs
+      value={value}
+      onValueChange={setValue}
+      className="mx-auto w-full max-w-[400px] flex-col gap-1.5">
+      <View className="px-7">
+        <TabsList className=" w-full flex-row">
           <TabsTrigger value="individual" className="flex-1">
             <Text>Bireysel</Text>
           </TabsTrigger>
@@ -160,9 +150,11 @@ export default function Profile() {
             <Text>Kurumsal</Text>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="individual">
+      </View>
+      <TabsContent value="individual">
+        <ScrollView>
           <Animated.View
-            className="gap-4 py-7"
+            className="gap-4 px-7 py-7"
             entering={FadeInLeft.delay(250).duration(250)}
             exiting={FadeOutLeft.duration(500)}>
             <Text className="text-2xl ">Hesap Bilgilerim</Text>
@@ -222,10 +214,12 @@ export default function Profile() {
               </Text>
             ) : null}
           </Animated.View>
-        </TabsContent>
-        <TabsContent value="company">
+        </ScrollView>
+      </TabsContent>
+      <TabsContent value="company">
+        <ScrollView>
           <Animated.View
-            className="py-7"
+            className="p-7"
             entering={FadeInRight.delay(250).duration(250)}
             exiting={FadeOutRight.duration(500)}>
             <View className="flex-row items-center justify-between">
@@ -237,7 +231,27 @@ export default function Profile() {
               />
             </View>
             {branches.length > 0 ? (
-              <Text>{JSON.stringify(branches, null, 2)}</Text>
+              <View className="mt-4 gap-4">
+                {branches.map((item: any) => (
+                  <TouchableOpacity
+                    activeOpacity={branch?.id === item.id ? 1 : 0.75}
+                    onPress={() => {
+                      if (branch?.id === item.id) {
+                        setBranch(null);
+                      } else {
+                        setBranch(item);
+                      }
+                    }}
+                    key={item.id}>
+                    <BranchItem item={item} />
+                  </TouchableOpacity>
+                ))}
+                <Text>
+                  * Şube görünümüne girmek veya şube görünümünden çıkmak istediğiniz şubenize
+                  tıklayınız.
+                </Text>
+                {/* <Text>{JSON.stringify(branches, null, 2)}</Text> */}
+              </View>
             ) : (
               <View className="items-center gap-4 py-7">
                 <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
@@ -250,8 +264,8 @@ export default function Profile() {
               </View>
             )}
           </Animated.View>
-        </TabsContent>
-      </Tabs>
-    </ScrollView>
+        </ScrollView>
+      </TabsContent>
+    </Tabs>
   );
 }

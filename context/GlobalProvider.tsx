@@ -7,15 +7,15 @@ import { getItem, setItem } from '~/core/storage';
 export interface GlobalContextValue {
   session: Session | null;
   setSession: React.Dispatch<React.SetStateAction<Session | null>>;
-  branch: number | null;
-  setBranch: React.Dispatch<React.SetStateAction<number | null>>;
+  branch: any;
+  setBranch: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const GlobalContext = React.createContext<GlobalContextValue>({} as GlobalContextValue);
 
 export const GlobalProvider: React.FC<PropsWithChildren> = (props) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [branch, setBranch] = useState<number | null>(null);
+  const [branch, setBranch] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

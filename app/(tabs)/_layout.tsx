@@ -1,10 +1,10 @@
 import { Redirect, Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { Iconify } from '~/lib/icons/Iconify';
 
 export default function TabLayout() {
-  const { session } = useGlobalContext();
+  const { session, branch } = useGlobalContext();
 
   if (!session) return <Redirect href="/auth" />;
 
@@ -30,18 +30,44 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Keşfet',
           headerShown: false,
+          tabBarButton(props) {
+            return branch ? null : <TouchableOpacity {...props} />;
+          },
           tabBarIcon: ({ focused }) =>
             focused ? (
               <Iconify
-                icon="solar:home-2-bold-duotone"
+                icon="solar:compass-bold-duotone"
                 size={24}
                 className={focused ? 'text-primary' : 'text-zinc-700'}
               />
             ) : (
               <Iconify
-                icon="solar:home-2-line-duotone"
+                icon="solar:compass-line-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="branch"
+        options={{
+          title: 'Şube',
+          tabBarButton(props) {
+            return branch ? <TouchableOpacity {...props} /> : null;
+          },
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Iconify
+                icon="solar:shop-bold-duotone"
+                size={24}
+                className={focused ? 'text-primary' : 'text-zinc-700'}
+              />
+            ) : (
+              <Iconify
+                icon="solar:shop-line-duotone"
                 size={24}
                 className={focused ? 'text-primary' : 'text-zinc-700'}
               />
@@ -52,6 +78,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profil',
+
           tabBarIcon: ({ focused }) =>
             focused ? (
               <Iconify

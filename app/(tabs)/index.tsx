@@ -1,17 +1,17 @@
-import { Link, router } from 'expo-router';
+import { Link, Redirect, router, useFocusEffect } from 'expo-router';
 
 import { Text } from '~/components/ui/text';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { supabase } from '~/utils/supabase';
 
 import { getNetworkStateAsync } from 'expo-network';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View } from 'react-native';
 
 export default function Home() {
-  const { session } = useGlobalContext();
+  const { session, branch } = useGlobalContext();
 
   useEffect(() => {
     (async () => {
@@ -21,6 +21,14 @@ export default function Home() {
       }
     })();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (branch) {
+        router.replace('/branch');
+      }
+    }, [])
+  );
 
   const [data, setData] = useState<any>(null);
   const testDB = async () => {

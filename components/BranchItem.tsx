@@ -40,15 +40,19 @@ const BranchItem = ({ item, onUpdate }: any) => {
   const tap = Gesture.Tap()
     .runOnJS(true)
     .onEnd(() => {
-      let lbl = getSectorLabel(item.sector);
+      if (branch?.id != item.id) {
+        let lbl = getSectorLabel(item.sector);
 
-      setBranch({
-        ...item,
-        sector: {
-          value: item.sector,
-          label: lbl,
-        },
-      });
+        setBranch({
+          ...item,
+          sector: {
+            value: item.sector,
+            label: lbl,
+          },
+        });
+      } else {
+        setBranch(null);
+      }
     });
   const composed = Gesture.Race(tap, longPress);
 

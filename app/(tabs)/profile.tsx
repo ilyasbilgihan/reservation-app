@@ -24,6 +24,7 @@ import { Iconify } from '~/lib/icons/Iconify';
 import BranchItem from '~/components/BranchItem';
 
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { getSectorLabel } from '~/utils/getLabels';
 
 export default function Profile() {
   const { session, setBranch, branch } = useGlobalContext();
@@ -127,7 +128,9 @@ export default function Profile() {
       .order('created_at', { ascending: false });
 
     if (data) {
-      setBranches(data);
+      setBranches(
+        data.map((b) => ({ ...b, sector: { value: b.sector, label: getSectorLabel(b.sector) } }))
+      );
     }
   };
 

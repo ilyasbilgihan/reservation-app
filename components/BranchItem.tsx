@@ -8,7 +8,6 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { Text } from '~/components/ui/text';
 import BranchFormBottomSheet from './BranchFormBottomSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { getSectorLabel } from '~/utils/getLabels';
 
 const BranchItem = ({ item, onUpdate }: any) => {
   const { branch, setBranch } = useGlobalContext();
@@ -41,15 +40,7 @@ const BranchItem = ({ item, onUpdate }: any) => {
     .runOnJS(true)
     .onEnd(() => {
       if (branch?.id != item.id) {
-        let lbl = getSectorLabel(item.sector);
-
-        setBranch({
-          ...item,
-          sector: {
-            value: item.sector,
-            label: lbl,
-          },
-        });
+        setBranch(item);
       } else {
         setBranch(null);
       }
@@ -69,7 +60,7 @@ const BranchItem = ({ item, onUpdate }: any) => {
             </Text>
             <Text>{item.phone}</Text>
             <View className="flex-row justify-between">
-              <Text>{getSectorLabel(item.sector)}</Text>
+              <Text>{item?.sector?.label}</Text>
               <Text>
                 {item.city}, {item.country}
               </Text>

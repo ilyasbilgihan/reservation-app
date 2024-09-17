@@ -33,7 +33,7 @@ const BranchFormBottomSheet = forwardRef<
   }
 >(({ onCreate, branch }, ref) => {
   const { image, setImage, pickImage } = useImagePicker();
-  const { session } = useGlobalContext();
+  const { session, setBranch } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -92,35 +92,30 @@ const BranchFormBottomSheet = forwardRef<
       const { error } = await supabase
         .from('branch')
         .update({
-          name: formData.name,
-          phone: formData.phone,
-          country: formData.country,
-          city: formData.city,
-          location: formData.location,
-          thumbnail: uploadedImageUrl || formData.thumbnail,
-          reservation_period: formData.reservation_period,
+          ...formData,
           sector: formData.sector.value,
-          owner_id: session?.user.id,
+          thumbnail: uploadedImageUrl || formData.thumbnail,
         })
         .eq('id', branch?.id);
 
       if (error) {
         Alert.alert('Error update', error.message);
         console.log('error update', error.message);
+        return;
+      } else {
+        setBranch({
+          ...formData,
+          id: branch?.id,
+          thumbnail: uploadedImageUrl || formData.thumbnail,
+        });
       }
     } else {
       const { data, error } = await supabase
         .from('branch')
         .insert({
-          name: formData.name,
-          phone: formData.phone,
-          country: formData.country,
-          city: formData.city,
-          location: formData.location,
-          thumbnail: uploadedImageUrl,
-          reservation_period: formData.reservation_period,
+          ...formData,
           sector: formData.sector.value,
-          owner_id: session?.user.id,
+          thumbnail: uploadedImageUrl || formData.thumbnail,
         })
         .select('id')
         .single();
@@ -128,6 +123,7 @@ const BranchFormBottomSheet = forwardRef<
       if (error) {
         Alert.alert('Error create', error.message);
         console.log('error create', error.message);
+        return;
       } else {
         const { error } = await supabase.from('working_hour').insert([
           { branch_id: data.id, day: 'Monday' },
@@ -218,17 +214,17 @@ const BranchFormBottomSheet = forwardRef<
                   <SelectContent insets={contentInsets} className="w-full">
                     <SelectGroup>
                       <SelectLabel className="text-stone-400">Sektörler</SelectLabel>
-                      <SelectItem label="Bakım Hizmetleri" value="Grooming">
-                        Bakım Hizmetleri
+                      <SelectItem label="Bakım" value="Grooming">
+                        Bakım
                       </SelectItem>
-                      <SelectItem label="Konaklama Hizmetleri" value="Accommodation">
-                        Konaklama Hizmetleri
+                      <SelectItem label="Konaklama" value="Accommodation">
+                        Konaklama
                       </SelectItem>
-                      <SelectItem label="Kiralama Hizmetleri" value="Rental">
-                        Kiralama Hizmetleri
+                      <SelectItem label="Kiralama" value="Rental">
+                        Kiralama
                       </SelectItem>
-                      <SelectItem label="Yemek Hizmetleri" value="Food">
-                        Yemek Hizmetleri
+                      <SelectItem label="Yemek" value="Food">
+                        Yemek
                       </SelectItem>
                     </SelectGroup>
                   </SelectContent>

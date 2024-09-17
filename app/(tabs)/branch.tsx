@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View, ImageBackground, TouchableOpacity } from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -19,10 +19,12 @@ import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 import WorkingHourBottomSheet from '~/components/WorkingHourBottomSheet';
 
+import { getAssetLabel } from '~/utils/getLabels';
+
 const Branch = () => {
   const { branch } = useGlobalContext();
 
-  const [tab, setTab] = useState<string>('general');
+  const [tab, setTab] = useState<string>('assets');
 
   useFocusEffect(
     useCallback(() => {
@@ -41,7 +43,8 @@ const Branch = () => {
           <View className="w-screen p-3.5 pt-0 ">
             <ImageBackground
               source={{ uri: branch?.thumbnail }}
-              className="aspect-square w-full justify-between overflow-hidden rounded-3xl p-3.5">
+              style={{ aspectRatio: 16 / 9 }}
+              className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
               <View className="items-end">
                 <WorkingHourBottomSheet />
               </View>
@@ -87,30 +90,50 @@ const Branch = () => {
             <View className="px-7">
               <TabsList className=" w-full flex-row ">
                 <TabsTrigger value="assets" className="flex-1 ">
-                  <Text>Varlıklar</Text>
+                  <Text>{getAssetLabel(branch?.sector?.value)}</Text>
                 </TabsTrigger>
                 <TabsTrigger value="services" className="flex-1 ">
-                  <Text>Hizmetler</Text>
+                  <Text>Hizmetlerim</Text>
                 </TabsTrigger>
               </TabsList>
             </View>
             <TabsContent value="assets">
               <ScrollView>
                 <Animated.View
-                  className="px-7"
+                  className="p-7"
                   entering={FadeInLeft.delay(250).duration(250)}
                   exiting={FadeOutLeft.duration(500)}>
-                  <Text>TODO: Assets List/Create/Update</Text>
+                  <View className="flex-row justify-between">
+                    <Text className="font-qs-semibold text-2xl">
+                      Rezerv {getAssetLabel(branch?.sector?.value)}
+                    </Text>
+                    <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
+                      <Iconify
+                        icon="solar:add-circle-line-duotone"
+                        size={32}
+                        className=" text-slate-400"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </Animated.View>
               </ScrollView>
             </TabsContent>
             <TabsContent value="services">
               <ScrollView>
                 <Animated.View
-                  className="px-7"
+                  className="p-7"
                   entering={FadeInRight.delay(250).duration(250)}
                   exiting={FadeOutRight.duration(500)}>
-                  <Text>TODO: Services List/Create/Update</Text>
+                  <View className="flex-row justify-between">
+                    <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
+                    <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
+                      <Iconify
+                        icon="solar:add-circle-line-duotone"
+                        size={32}
+                        className=" text-slate-400"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </Animated.View>
               </ScrollView>
             </TabsContent>

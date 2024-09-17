@@ -38,7 +38,7 @@ const BottomSheet = forwardRef<
 
   return (
     <BottomSheetModal
-      backgroundStyle={{ backgroundColor: 'rgb(248 250 252)' }}
+      backgroundStyle={{ backgroundColor: 'rgb(255 255 255)' }}
       /* backdropComponent={CustomBackdrop} */
       ref={ref}
       index={1}

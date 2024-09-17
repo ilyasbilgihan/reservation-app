@@ -18,3 +18,12 @@ export const getDayLabel = (day: string) => {
     Sunday: 'Pazar',
   }[day];
 };
+
+export const getAssetLabel = (sector: string) => {
+  return {
+    Accommodation: 'Dairelerim',
+    Rental: 'Araçlarım',
+    Grooming: 'Personellerim',
+    Food: 'Masalarım',
+  }[sector];
+};

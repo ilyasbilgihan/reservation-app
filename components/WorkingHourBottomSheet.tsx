@@ -89,8 +89,8 @@ const WorkingHourBottomSheet = () => {
                 return (
                   <View
                     key={item.id}
-                    style={{ backgroundColor: isClosed ? 'rgb(255 241 242)' : 'white' }}
-                    className="flex-row items-center justify-between overflow-hidden rounded-xl bg-white  pl-4 shadow-soft-5">
+                    style={{ backgroundColor: isClosed ? 'rgb(255 241 242)' : 'rgb(252 251 254)' }}
+                    className="flex-row items-center justify-between overflow-hidden rounded-xl bg-background pl-4 shadow-soft-5">
                     <Text>{getDayLabel(item.day)}</Text>
                     <View className="flex-row items-center">
                       <TouchableOpacity

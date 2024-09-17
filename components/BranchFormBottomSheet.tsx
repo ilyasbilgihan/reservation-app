@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
-import { getSectorLabel } from '~/utils/getSectorLabel';
+import { getSectorLabel } from '~/utils/getLabels';
 
 const BranchFormBottomSheet = forwardRef<
   BottomSheetModal,
@@ -109,21 +109,36 @@ const BranchFormBottomSheet = forwardRef<
         console.log('error update', error.message);
       }
     } else {
-      const { error } = await supabase.from('branch').insert({
-        name: formData.name,
-        phone: formData.phone,
-        country: formData.country,
-        city: formData.city,
-        location: formData.location,
-        thumbnail: uploadedImageUrl,
-        reservation_period: formData.reservation_period,
-        sector: formData.sector.value,
-        owner_id: session?.user.id,
-      });
+      const { data, error } = await supabase
+        .from('branch')
+        .insert({
+          name: formData.name,
+          phone: formData.phone,
+          country: formData.country,
+          city: formData.city,
+          location: formData.location,
+          thumbnail: uploadedImageUrl,
+          reservation_period: formData.reservation_period,
+          sector: formData.sector.value,
+          owner_id: session?.user.id,
+        })
+        .select('id')
+        .single();
 
       if (error) {
         Alert.alert('Error create', error.message);
         console.log('error create', error.message);
+      } else {
+        const { error } = await supabase.from('working_hour').insert([
+          { branch_id: data.id, day: 'Monday' },
+          { branch_id: data.id, day: 'Tuesday' },
+          { branch_id: data.id, day: 'Wednesday' },
+          { branch_id: data.id, day: 'Thursday' },
+          { branch_id: data.id, day: 'Friday' },
+          { branch_id: data.id, day: 'Saturday' },
+          { branch_id: data.id, day: 'Sunday' },
+        ]);
+        console.log(data.id, error);
       }
     }
 

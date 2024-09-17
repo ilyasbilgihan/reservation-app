@@ -8,7 +8,7 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { Text } from '~/components/ui/text';
 import BranchFormBottomSheet from './BranchFormBottomSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { getSectorLabel } from '~/utils/getSectorLabel';
+import { getSectorLabel } from '~/utils/getLabels';
 
 const BranchItem = ({ item, onUpdate }: any) => {
   const { branch, setBranch } = useGlobalContext();

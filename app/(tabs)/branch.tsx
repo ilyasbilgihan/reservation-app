@@ -1,17 +1,23 @@
 import React, { useCallback, useState } from 'react';
-import { View, ImageBackground, StatusBar } from 'react-native';
+import { View, ImageBackground } from 'react-native';
 
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
 
-import { Iconify } from '~/lib/icons/Iconify';
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  FadeOutLeft,
+  FadeOutRight,
+} from 'react-native-reanimated';
 
-import { Text } from '~/components/ui/text';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text } from '~/components/ui/text';
+import { Iconify } from '~/lib/icons/Iconify';
+import WorkingHourBottomSheet from '~/components/WorkingHourBottomSheet';
 
 const Branch = () => {
   const { branch } = useGlobalContext();
@@ -20,11 +26,11 @@ const Branch = () => {
 
   useFocusEffect(
     useCallback(() => {
-      //StatusBar.setHidden(true);
+      /* StatusBar.setHidden(true);
 
       return () => {
         StatusBar.setHidden(false);
-      };
+      }; */
     }, [])
   );
 
@@ -35,8 +41,11 @@ const Branch = () => {
           <View className="w-screen p-3.5 pt-0 ">
             <ImageBackground
               source={{ uri: branch?.thumbnail }}
-              className="aspect-square w-full items-center justify-end overflow-hidden rounded-3xl p-3.5">
-              <View className="w-full gap-2 rounded-2xl bg-background p-4">
+              className="aspect-square w-full justify-between overflow-hidden rounded-3xl p-3.5">
+              <View className="items-end">
+                <WorkingHourBottomSheet />
+              </View>
+              <View style={{ borderRadius: 10 }} className="w-full gap-2 bg-white p-4">
                 <View className="flex-row items-center justify-between">
                   <Text
                     numberOfLines={2}
@@ -77,23 +86,20 @@ const Branch = () => {
             className="mx-auto w-full max-w-[400px] flex-col gap-1.5">
             <View className="px-7">
               <TabsList className=" w-full flex-row ">
-                <TabsTrigger value="general" className="flex-1 ">
-                  <Text>Genel</Text>
+                <TabsTrigger value="assets" className="flex-1 ">
+                  <Text>Varlıklar</Text>
                 </TabsTrigger>
                 <TabsTrigger value="services" className="flex-1 ">
                   <Text>Hizmetler</Text>
                 </TabsTrigger>
-                <TabsTrigger value="working_hours" className="flex-1 ">
-                  <Text>Ç. Saatleri</Text>
-                </TabsTrigger>
               </TabsList>
             </View>
-            <TabsContent value="general">
+            <TabsContent value="assets">
               <ScrollView>
                 <Animated.View
                   className="px-7"
-                  entering={FadeIn.delay(250).duration(250)}
-                  exiting={FadeOut.duration(500)}>
+                  entering={FadeInLeft.delay(250).duration(250)}
+                  exiting={FadeOutLeft.duration(500)}>
                   <Text>TODO: Assets List/Create/Update</Text>
                 </Animated.View>
               </ScrollView>
@@ -102,19 +108,9 @@ const Branch = () => {
               <ScrollView>
                 <Animated.View
                   className="px-7"
-                  entering={FadeIn.delay(250).duration(250)}
-                  exiting={FadeOut.duration(500)}>
+                  entering={FadeInRight.delay(250).duration(250)}
+                  exiting={FadeOutRight.duration(500)}>
                   <Text>TODO: Services List/Create/Update</Text>
-                </Animated.View>
-              </ScrollView>
-            </TabsContent>
-            <TabsContent value="working_hours">
-              <ScrollView>
-                <Animated.View
-                  className="px-7"
-                  entering={FadeIn.delay(250).duration(250)}
-                  exiting={FadeOut.duration(500)}>
-                  <Text>TODO: Working Hours List/Create/Update</Text>
                 </Animated.View>
               </ScrollView>
             </TabsContent>

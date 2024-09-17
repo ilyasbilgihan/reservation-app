@@ -11,7 +11,7 @@ import { Text } from '~/components/ui/text';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import EditBranch from '~/components/EditBranch';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Branch = () => {
   const { branch } = useGlobalContext();
@@ -20,7 +20,7 @@ const Branch = () => {
 
   useFocusEffect(
     useCallback(() => {
-      StatusBar.setHidden(true);
+      //StatusBar.setHidden(true);
 
       return () => {
         StatusBar.setHidden(false);
@@ -29,18 +29,18 @@ const Branch = () => {
   );
 
   return (
-    <>
+    <SafeAreaView>
       {branch ? (
         <ScrollView>
-          <View className="w-screen p-4 ">
+          <View className="w-screen p-3.5 pt-0 ">
             <ImageBackground
               source={{ uri: branch?.thumbnail }}
-              className="aspect-square w-full items-center justify-end overflow-hidden rounded-3xl p-4">
-              <View className="w-full gap-2 rounded-3xl bg-background p-4">
+              className="aspect-square w-full items-center justify-end overflow-hidden rounded-3xl p-3.5">
+              <View className="w-full gap-2 rounded-2xl bg-background p-4">
                 <View className="flex-row items-center justify-between">
                   <Text
                     numberOfLines={2}
-                    className="font-qs-semibold flex-1 text-2xl font-semibold">
+                    className="flex-1 font-qs-semibold text-2xl font-semibold">
                     {branch.name}
                   </Text>
                   {/* <Text>
@@ -94,7 +94,7 @@ const Branch = () => {
                   className="px-7"
                   entering={FadeIn.delay(250).duration(250)}
                   exiting={FadeOut.duration(500)}>
-                  <EditBranch branch={branch} />
+                  <Text>TODO: Assets List/Create/Update</Text>
                 </Animated.View>
               </ScrollView>
             </TabsContent>
@@ -121,7 +121,7 @@ const Branch = () => {
           </Tabs>
         </ScrollView>
       ) : null}
-    </>
+    </SafeAreaView>
   );
 };
 

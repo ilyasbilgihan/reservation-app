@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { TouchableOpacity, View, Image } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
@@ -13,7 +13,7 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import useImagePicker from '~/utils/useImagePicker';
 
-import CreateBranchModal from '~/components/CreateBranchModal';
+import BranchFormBottomSheet from '~/components/BranchFormBottomSheet';
 
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/text';
@@ -23,7 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Iconify } from '~/lib/icons/Iconify';
 import BranchItem from '~/components/BranchItem';
 
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function Profile() {
   const { session, setBranch, branch } = useGlobalContext();
@@ -123,7 +123,8 @@ export default function Profile() {
     const { data, error } = await supabase
       .from('branch')
       .select('*')
-      .eq('owner_id', session?.user.id);
+      .eq('owner_id', session?.user.id)
+      .order('created_at', { ascending: false });
 
     if (data) {
       setBranches(data);
@@ -137,6 +138,13 @@ export default function Profile() {
       setImage(undefined);
     }, [])
   );
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
 
   return (
     <Tabs
@@ -226,45 +234,35 @@ export default function Profile() {
             exiting={FadeOutRight.duration(500)}>
             <View className="flex-row items-center justify-between">
               <Text className="font-qs-semibold text-2xl">Şubelerim</Text>
-              <CreateBranchModal
+              <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
+                <Iconify
+                  icon="solar:add-circle-line-duotone"
+                  size={32}
+                  className=" text-slate-400"
+                />
+              </TouchableOpacity>
+              <BranchFormBottomSheet
+                ref={bottomSheetModalRef}
                 onCreate={() => {
                   fetchBranches();
+                  bottomSheetModalRef.current?.dismiss();
                 }}
               />
             </View>
             {branches.length > 0 ? (
               <View className="mt-4 gap-4">
                 {branches.map((item: any) => (
-                  <TouchableOpacity
-                    activeOpacity={branch?.id === item.id ? 1 : 0.75}
-                    onPress={() => {
-                      if (branch?.id === item.id) {
-                        setBranch(null);
-                      } else {
-                        //@ts-ignore
-                        let lbl = {
-                          Accommodation: 'Konaklama Hizmetleri',
-                          Rental: 'Kiralama Hizmetleri',
-                          Grooming: 'Bakım Hizmetleri',
-                          Food: 'Yemek Hizmetleri',
-                        }[item.sector];
-
-                        setBranch({
-                          ...item,
-                          sector: {
-                            value: item.sector,
-                            label: lbl,
-                          },
-                        });
-                      }
+                  <BranchItem
+                    item={item}
+                    key={item.id}
+                    onUpdate={() => {
+                      fetchBranches();
                     }}
-                    key={item.id}>
-                    <BranchItem item={item} />
-                  </TouchableOpacity>
+                  />
                 ))}
                 <Text>
                   * Şube görünümüne girmek veya şube görünümünden çıkmak istediğiniz şubenize
-                  tıklayınız.
+                  tıklayınız. Düzenlemek için ise basılı tutunuz.
                 </Text>
                 {/* <Text>{JSON.stringify(branches, null, 2)}</Text> */}
               </View>

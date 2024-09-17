@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
+import { View, Text, TouchableOpacity, Image, Alert, Platform, Pressable } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetView, BottomSheetModal, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
 import BottomSheet from './BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
@@ -23,31 +23,32 @@ import {
   SelectValue,
 } from './ui/select';
 import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
+import { getSectorLabel } from '~/utils/getSectorLabel';
 
-const CreateBranchModal = ({ onCreate }: any) => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+const BranchFormBottomSheet = forwardRef<
+  BottomSheetModal,
+  {
+    branch?: any;
+    onCreate: () => void;
+  }
+>(({ onCreate, branch }, ref) => {
   const { image, setImage, pickImage } = useImagePicker();
   const { session } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    country: '',
-    city: '',
-    location: '',
-    thumbnail: '',
-    reservation_period: '0',
-    sector: null,
+    name: branch?.name || '',
+    phone: branch?.phone || '',
+    country: branch?.country || '',
+    city: branch?.city || '',
+    location: branch?.location || '',
+    thumbnail: branch?.thumbnail || '',
+    reservation_period: branch?.reservation_period || '',
+    sector: branch?.sector || '',
   });
   const setField = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
   };
-
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
 
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -87,26 +88,47 @@ const CreateBranchModal = ({ onCreate }: any) => {
         }
     } */
 
-    const { error } = await supabase.from('branch').insert({
-      name: formData.name,
-      phone: formData.phone,
-      country: formData.country,
-      city: formData.city,
-      location: formData.location,
-      thumbnail: uploadedImageUrl,
-      reservation_period: formData.reservation_period,
-      sector: formData.sector,
-      owner_id: session?.user.id,
-    });
+    if (branch) {
+      const { error } = await supabase
+        .from('branch')
+        .update({
+          name: formData.name,
+          phone: formData.phone,
+          country: formData.country,
+          city: formData.city,
+          location: formData.location,
+          thumbnail: uploadedImageUrl || formData.thumbnail,
+          reservation_period: formData.reservation_period,
+          sector: formData.sector.value,
+          owner_id: session?.user.id,
+        })
+        .eq('id', branch?.id);
 
-    if (error) {
-      Alert.alert('Error', error.message);
-      console.log('error', error.message);
+      if (error) {
+        Alert.alert('Error update', error.message);
+        console.log('error update', error.message);
+      }
+    } else {
+      const { error } = await supabase.from('branch').insert({
+        name: formData.name,
+        phone: formData.phone,
+        country: formData.country,
+        city: formData.city,
+        location: formData.location,
+        thumbnail: uploadedImageUrl,
+        reservation_period: formData.reservation_period,
+        sector: formData.sector.value,
+        owner_id: session?.user.id,
+      });
+
+      if (error) {
+        Alert.alert('Error create', error.message);
+        console.log('error create', error.message);
+      }
     }
 
     setLoading(false);
     onCreate();
-    bottomSheetModalRef.current?.dismiss();
   };
 
   const isValidPhone = useCallback(() => {
@@ -121,10 +143,7 @@ const CreateBranchModal = ({ onCreate }: any) => {
 
   return (
     <>
-      <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
-        <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
-      </TouchableOpacity>
-      <BottomSheet ref={bottomSheetModalRef}>
+      <BottomSheet ref={ref}>
         <BottomSheetView>
           <ScrollView>
             <View className="gap-4 p-7">
@@ -136,13 +155,7 @@ const CreateBranchModal = ({ onCreate }: any) => {
                   className="aspect-square w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-background">
                   {formData.thumbnail || image ? (
                     <Image
-                      source={
-                        image
-                          ? { uri: image.uri }
-                          : formData.thumbnail
-                            ? { uri: formData.thumbnail }
-                            : require('~/assets/no-image.png')
-                      }
+                      source={image ? { uri: image.uri } : { uri: formData.thumbnail }}
                       className="h-full w-full"
                     />
                   ) : (
@@ -153,6 +166,14 @@ const CreateBranchModal = ({ onCreate }: any) => {
                     />
                   )}
                 </TouchableOpacity>
+                {formData.thumbnail && image ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setImage(undefined);
+                    }}>
+                    <Text className="text-destructive">Seçilen Resmi Kaldır</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
               <View className="gap-1">
                 <Label nativeID="name">Şube Adı</Label>
@@ -167,12 +188,14 @@ const CreateBranchModal = ({ onCreate }: any) => {
               <View className="gap-1">
                 <Label nativeID="sector">Sektör</Label>
                 <Select
+                  defaultValue={formData.sector}
                   onValueChange={(item: any) => {
-                    setField('sector', item.value);
+                    let lbl = getSectorLabel(item.value);
+                    setField('sector', { value: item.value, label: lbl });
                   }}>
                   <SelectTrigger>
                     <SelectValue
-                      style={{ color: formData.sector != null ? 'black' : 'rgb(163 163 163)' }}
+                      style={{ color: formData.sector ? 'black' : 'rgb(163 163 163)' }}
                       className="text-lg text-muted-foreground "
                       placeholder="Şubeyle ilgili bir sektör seç"
                     />
@@ -234,24 +257,39 @@ const CreateBranchModal = ({ onCreate }: any) => {
                 />
               </View>
               <View className="gap-1">
-                <Label nativeID="reservation_period">Rezervasyon Periyodu</Label>
+                <View className="flex-row items-center gap-2">
+                  <Label nativeID="reservation_period">Rezervasyon Periyodu</Label>
+                  <Tooltip delayDuration={150}>
+                    <TooltipTrigger asChild>
+                      <Pressable>
+                        <Iconify
+                          icon="solar:question-circle-bold"
+                          size={20}
+                          className=" text-slate-400"
+                        />
+                      </Pressable>
+                    </TooltipTrigger>
+                    <TooltipContent insets={contentInsets}>
+                      <Text className="text-sm text-slate-700">
+                        Dakika cinsinden alınabilecek en kısa rezervasyon süresi.
+                      </Text>
+                    </TooltipContent>
+                  </Tooltip>
+                </View>
                 <Input
                   placeholder="60"
                   keyboardType="numeric"
-                  value={formData.reservation_period}
+                  value={'' + formData.reservation_period}
                   onChangeText={(value) => {
                     setField('reservation_period', value);
                   }}
                   aria-labelledby="reservation_period"
                   aria-errormessage="reservation_period"
                 />
-                <Text className="text-sm italic text-slate-500">
-                  * Dakika cinsinden alınabilecek en kısa rezervasyon süresi.
-                </Text>
               </View>
 
               <Button onPress={handleCreateBranch} disabled={loading}>
-                <Text className="text-slate-100">Oluştur</Text>
+                <Text className="text-slate-100">{branch ? 'Kaydet' : 'Oluştur'}</Text>
               </Button>
             </View>
           </ScrollView>
@@ -259,6 +297,6 @@ const CreateBranchModal = ({ onCreate }: any) => {
       </BottomSheet>
     </>
   );
-};
+});
 
-export default CreateBranchModal;
+export default BranchFormBottomSheet;

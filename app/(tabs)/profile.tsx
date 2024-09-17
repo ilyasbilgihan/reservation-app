@@ -273,9 +273,9 @@ export default function Profile() {
               <View className="items-center gap-4 py-7">
                 <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
                 <View className="items-center">
-                  <Text className="text-muted-foreground">Henüz bir şube eklememişsin.</Text>
+                  <Text className="text-muted-foreground">Henüz bir şube eklememişsiniz.</Text>
                   <Text className="text-muted-foreground">
-                    Eklemek istersen sağ üstteki artı butonuna tıkla.
+                    Eklemek isterseniz sağ üstteki artı butonuna tıklayınız.
                   </Text>
                 </View>
               </View>

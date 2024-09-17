@@ -21,9 +21,9 @@ export const getDayLabel = (day: string) => {
 
 export const getAssetLabel = (sector: string) => {
   return {
-    Accommodation: 'Dairelerim',
-    Rental: 'Araçlarım',
-    Grooming: 'Personellerim',
-    Food: 'Masalarım',
+    Accommodation: { title: 'Dairelerim', singular: 'daire', placeholder: 'Kat: 6, D.No: 3' },
+    Rental: { title: 'Araçlarım', singular: 'araç', placeholder: 'Peugeot 408 - 2024 (34 UA 34)' },
+    Grooming: { title: 'Personellerim', singular: 'personel', placeholder: 'Ayşe Yılmaz' },
+    Food: { title: 'Masalarım', singular: 'masa', placeholder: 'Bahçe - Masa No: 2' },
   }[sector];
 };

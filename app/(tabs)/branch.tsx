@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, ImageBackground, TouchableOpacity } from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
@@ -20,6 +20,9 @@ import { Iconify } from '~/lib/icons/Iconify';
 import WorkingHourBottomSheet from '~/components/WorkingHourBottomSheet';
 
 import { getAssetLabel } from '~/utils/getLabels';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AssetFormBottomSheet from '~/components/AssetFormBottomSheet';
+import AssetTabContent from '~/components/AssetTabContent';
 
 const Branch = () => {
   const { branch } = useGlobalContext();
@@ -90,7 +93,7 @@ const Branch = () => {
             <View className="px-7">
               <TabsList className=" w-full flex-row ">
                 <TabsTrigger value="assets" className="flex-1 ">
-                  <Text>{getAssetLabel(branch?.sector?.value)}</Text>
+                  <Text>{getAssetLabel(branch?.sector?.value)?.title}</Text>
                 </TabsTrigger>
                 <TabsTrigger value="services" className="flex-1 ">
                   <Text>Hizmetlerim</Text>
@@ -98,44 +101,29 @@ const Branch = () => {
               </TabsList>
             </View>
             <TabsContent value="assets">
-              <ScrollView>
-                <Animated.View
-                  className="p-7"
-                  entering={FadeInLeft.delay(250).duration(250)}
-                  exiting={FadeOutLeft.duration(500)}>
-                  <View className="flex-row justify-between">
-                    <Text className="font-qs-semibold text-2xl">
-                      Rezerv {getAssetLabel(branch?.sector?.value)}
-                    </Text>
-                    <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
-                      <Iconify
-                        icon="solar:add-circle-line-duotone"
-                        size={32}
-                        className=" text-slate-400"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </Animated.View>
-              </ScrollView>
+              <Animated.View
+                style={{ paddingTop: 16 }}
+                entering={FadeInLeft.delay(250).duration(250)}
+                exiting={FadeOutLeft.duration(500)}>
+                <AssetTabContent />
+              </Animated.View>
             </TabsContent>
             <TabsContent value="services">
-              <ScrollView>
-                <Animated.View
-                  className="p-7"
-                  entering={FadeInRight.delay(250).duration(250)}
-                  exiting={FadeOutRight.duration(500)}>
-                  <View className="flex-row justify-between">
-                    <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
-                    <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
-                      <Iconify
-                        icon="solar:add-circle-line-duotone"
-                        size={32}
-                        className=" text-slate-400"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </Animated.View>
-              </ScrollView>
+              <Animated.View
+                style={{ paddingTop: 16 }}
+                entering={FadeInRight.delay(250).duration(250)}
+                exiting={FadeOutRight.duration(500)}>
+                <View className="flex-row justify-between px-7">
+                  <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
+                  <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
+                    <Iconify
+                      icon="solar:add-circle-line-duotone"
+                      size={32}
+                      className=" text-slate-400"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
             </TabsContent>
           </Tabs>
         </ScrollView>

@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, TouchableOpacity, Alert } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, TouchableOpacity, Alert, Dimensions } from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -14,10 +14,11 @@ import { Text } from './ui/text';
 
 import { getAssetLabel } from '~/utils/getLabels';
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
 const AssetTabContent = () => {
   const { branch } = useGlobalContext();
   const [assets, setAssets] = useState<any>([]);
-  const [asset, setAsset] = useState<any>({});
   const assetModalRef = useRef<BottomSheetModal>(null);
   useFocusEffect(
     useCallback(() => {
@@ -26,7 +27,11 @@ const AssetTabContent = () => {
   );
 
   const fetchAssets = async () => {
-    const { data, error } = await supabase.from('asset').select('*').eq('branch_id', branch?.id);
+    const { data, error } = await supabase
+      .from('asset')
+      .select('*')
+      .eq('branch_id', branch?.id)
+      .order('id');
     if (error) {
       Alert.alert(error.message);
       console.log(error);
@@ -43,19 +48,6 @@ const AssetTabContent = () => {
     setRefreshing(false);
   }, []);
 
-  const handleActivateAsset = async (id: any) => {
-    const { error } = await supabase.from('asset').update({ active: true }).eq('id', id);
-    if (!error) {
-      await fetchAssets();
-    }
-  };
-  const handleDeactivateAsset = async (id: any) => {
-    const { error } = await supabase.from('asset').update({ active: false }).eq('id', id);
-    if (!error) {
-      await fetchAssets();
-    }
-  };
-
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View className="flex-row justify-between px-7">
@@ -65,56 +57,22 @@ const AssetTabContent = () => {
         <TouchableOpacity
           activeOpacity={0.75}
           onPress={() => {
-            setAsset(null);
             assetModalRef.current?.present();
           }}>
           <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
         </TouchableOpacity>
+        <AssetFormBottomSheet
+          ref={assetModalRef}
+          onCreate={() => {
+            fetchAssets();
+            assetModalRef.current?.dismiss();
+          }}
+        />
       </View>
       {assets.length > 0 ? (
         <View className="mt-8 gap-4">
-          {assets?.map((asset: any) => (
-            <Swipeable
-              leftThreshold={100}
-              rightThreshold={100}
-              containerStyle={{ paddingHorizontal: 28 }}
-              key={asset.id}
-              renderLeftActions={() => {
-                return (
-                  <View className="w-1/2 flex-row items-center px-14">
-                    <Text className="text-emerald-400">Aktifleştir</Text>
-                  </View>
-                );
-              }}
-              renderRightActions={() => {
-                return (
-                  <View className="w-1/2 flex-row items-center justify-end px-14">
-                    <Text className="text-rose-400 ">Pasifleştir</Text>
-                  </View>
-                );
-              }}
-              onSwipeableWillOpen={(direction) => {
-                if (direction === 'left') {
-                  handleActivateAsset(asset.id);
-                } else {
-                  handleDeactivateAsset(asset.id);
-                }
-              }}>
-              <TouchableOpacity
-                activeOpacity={0.75}
-                onPress={() => {
-                  setAsset(asset);
-                  assetModalRef.current?.present();
-                }}>
-                <View
-                  style={{
-                    backgroundColor: asset?.active ? 'rgb(236 253 245)' : 'rgb(255 241 242)',
-                  }}
-                  className="flex-row rounded-xl p-4 shadow-soft-5">
-                  <Text className="text-lg">{asset.name}</Text>
-                </View>
-              </TouchableOpacity>
-            </Swipeable>
+          {assets?.map((item: any) => (
+            <SwipeableItem key={item.id} asset={item} fetchAssets={fetchAssets} />
           ))}
         </View>
       ) : (
@@ -130,6 +88,76 @@ const AssetTabContent = () => {
           </View>
         </View>
       )}
+    </ScrollView>
+  );
+};
+
+const SwipeableItem = ({ asset, fetchAssets }: any) => {
+  const handleActivateAsset = async () => {
+    const { error } = await supabase.from('asset').update({ active: true }).eq('id', asset.id);
+    if (!error) {
+      await fetchAssets();
+    }
+    ref.current?.close();
+  };
+  const handleDeactivateAsset = async () => {
+    const { error } = await supabase.from('asset').update({ active: false }).eq('id', asset.id);
+    if (!error) {
+      await fetchAssets();
+    }
+    ref.current?.close();
+  };
+
+  const ref = useRef<Swipeable>(null);
+  const assetModalRef = useRef<BottomSheetModal>(null);
+
+  return (
+    <>
+      <Swipeable
+        ref={ref}
+        leftThreshold={100}
+        rightThreshold={100}
+        containerStyle={{ paddingHorizontal: 28 }}
+        key={asset.id}
+        renderLeftActions={() => {
+          return (
+            <View
+              style={{ width: (SCREEN_WIDTH - 56) / 3 - 28 }}
+              className="ml-7 flex-row items-center justify-end">
+              <Text className="text-emerald-400">Aktifleştir</Text>
+            </View>
+          );
+        }}
+        renderRightActions={() => {
+          return (
+            <View
+              style={{ width: (SCREEN_WIDTH - 56) / 3 - 28 }}
+              className="mr-7 flex-row items-center justify-start">
+              <Text className="text-rose-400 ">Pasifleştir</Text>
+            </View>
+          );
+        }}
+        onSwipeableWillOpen={(direction) => {
+          if (direction === 'left') {
+            handleActivateAsset();
+          } else {
+            handleDeactivateAsset();
+          }
+        }}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={() => {
+            assetModalRef.current?.present();
+          }}>
+          <View
+            style={{
+              backgroundColor: asset?.active ? 'rgb(236 253 245)' : 'rgb(255 241 242)',
+            }}
+            className="flex-row rounded-xl p-4 shadow-soft-5">
+            <Text className="text-lg">{asset.name}</Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
       <AssetFormBottomSheet
         ref={assetModalRef}
         asset={asset}
@@ -138,7 +166,7 @@ const AssetTabContent = () => {
           assetModalRef.current?.dismiss();
         }}
       />
-    </ScrollView>
+    </>
   );
 };
 

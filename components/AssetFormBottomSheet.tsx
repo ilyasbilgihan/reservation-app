@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
-import { View, Text, Alert, Pressable } from 'react-native';
+import { View, Alert, Pressable } from 'react-native';
 
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '~/utils/supabase';
 import { getAssetLabel } from '~/utils/getLabels';
+import { Text } from './ui/text';
 
 const AssetFormBottomSheet = forwardRef<
   BottomSheetModal,

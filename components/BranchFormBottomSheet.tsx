@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert, Platform, Pressable } from 'react-native';
+import { View, TouchableOpacity, Image, Alert, Platform, Pressable } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { BottomSheetView, BottomSheetModal, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
@@ -24,6 +24,7 @@ import {
 } from './ui/select';
 import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import { getSectorLabel } from '~/utils/getLabels';
+import { Text } from './ui/text';
 
 const BranchFormBottomSheet = forwardRef<
   BottomSheetModal,
@@ -207,14 +208,14 @@ const BranchFormBottomSheet = forwardRef<
                   <SelectTrigger>
                     <SelectValue
                       style={{ color: formData.sector ? 'black' : 'rgb(163 163 163)' }}
-                      className="text-lg text-muted-foreground "
+                      className="font-qs-medium text-muted-foreground "
                       placeholder="Şubeyle ilgili bir sektör seç"
                     />
                   </SelectTrigger>
                   <SelectContent insets={contentInsets} className="w-full">
                     <SelectGroup>
                       <SelectLabel className="text-stone-400">Sektörler</SelectLabel>
-                      <SelectItem label="Bakım" value="Grooming">
+                      <SelectItem className="font-qs-medium" label="Bakım" value="Grooming">
                         Bakım
                       </SelectItem>
                       <SelectItem label="Konaklama" value="Accommodation">

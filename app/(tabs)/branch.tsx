@@ -23,6 +23,7 @@ import { getAssetLabel } from '~/utils/getLabels';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import AssetFormBottomSheet from '~/components/AssetFormBottomSheet';
 import AssetTabContent from '~/components/AssetTabContent';
+import ServiceTabContent from '~/components/ServiceTabContent';
 
 const Branch = () => {
   const { branch } = useGlobalContext();
@@ -42,7 +43,7 @@ const Branch = () => {
   return (
     <SafeAreaView>
       {branch ? (
-        <ScrollView>
+        <>
           <View className="w-screen p-3.5 pt-0 ">
             <ImageBackground
               source={{ uri: branch?.thumbnail }}
@@ -113,20 +114,11 @@ const Branch = () => {
                 style={{ paddingTop: 16 }}
                 entering={FadeInRight.delay(250).duration(250)}
                 exiting={FadeOutRight.duration(500)}>
-                <View className="flex-row justify-between px-7">
-                  <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
-                  <TouchableOpacity activeOpacity={0.75} onPress={() => {}}>
-                    <Iconify
-                      icon="solar:add-circle-line-duotone"
-                      size={32}
-                      className=" text-slate-400"
-                    />
-                  </TouchableOpacity>
-                </View>
+                <ServiceTabContent />
               </Animated.View>
             </TabsContent>
           </Tabs>
-        </ScrollView>
+        </>
       ) : null}
     </SafeAreaView>
   );

@@ -21,9 +21,29 @@ export const getDayLabel = (day: string) => {
 
 export const getAssetLabel = (sector: string) => {
   return {
-    Accommodation: { title: 'Dairelerim', singular: 'daire', placeholder: 'Kat: 6, D.No: 3' },
-    Rental: { title: 'Araçlarım', singular: 'araç', placeholder: 'Peugeot 408 - 2024 (34 UA 34)' },
-    Grooming: { title: 'Personellerim', singular: 'personel', placeholder: 'Ayşe Yılmaz' },
-    Food: { title: 'Masalarım', singular: 'masa', placeholder: 'Bahçe - Masa No: 2' },
+    Accommodation: {
+      title: 'Dairelerim',
+      singular: 'daire',
+      placeholder: 'Kat: 6, D.No: 3',
+      service: 'Oda Temizliği',
+    },
+    Rental: {
+      title: 'Araçlarım',
+      singular: 'araç',
+      placeholder: 'Peugeot 408 - 2024 (34 UA 34)',
+      service: 'Sigorta',
+    },
+    Grooming: {
+      title: 'Personellerim',
+      singular: 'personel',
+      placeholder: 'Ayşe Yılmaz',
+      service: 'Saç Boyama, Saç Kesim vs.',
+    },
+    Food: {
+      title: 'Masalarım',
+      singular: 'masa',
+      placeholder: 'Bahçe - Masa No: 2',
+      service: 'Doğum Günü, Kahvaltı vs.',
+    },
   }[sector];
 };

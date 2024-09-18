@@ -1,7 +1,7 @@
 import { Redirect, Tabs } from 'expo-router';
-import { View, TouchableOpacity } from 'react-native';
+
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { Iconify } from '~/lib/icons/Iconify';
+import TabBar from '~/components/TabBar';
 
 export default function TabLayout() {
   const { session, branch } = useGlobalContext();
@@ -10,44 +10,22 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      tabBar={TabBar}
+      sceneContainerStyle={{ backgroundColor: '#FAF9FB' }}
       screenOptions={{
         headerTitleAlign: 'center',
+        headerStyle: { backgroundColor: '#FAF9FB' },
         headerShadowVisible: false,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: 'rgb(87 51 158)',
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontFamily: 'Quicksand SemiBold',
-        },
-        tabBarStyle: {
-          height: 60,
-          paddingBottom: 10,
-          borderColor: '#FAF9FB',
-          backgroundColor: '#FAF9FB',
-        },
+        tabBarInactiveTintColor: 'rgb(101 115 135)',
+        tabBarActiveTintColor: 'hsl(260 51% 41%)',
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Keşfet',
           headerShown: false,
-          tabBarButton(props) {
-            return branch ? null : <TouchableOpacity {...props} />;
-          },
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <Iconify
-                icon="solar:compass-bold-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ) : (
-              <Iconify
-                icon="solar:compass-line-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ),
+          tabBarButton: branch ? () => <></> : undefined,
         }}
       />
       <Tabs.Screen
@@ -55,44 +33,13 @@ export default function TabLayout() {
         options={{
           title: 'Şube',
           headerShown: false,
-          tabBarButton(props) {
-            return branch ? <TouchableOpacity {...props} /> : null;
-          },
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <Iconify
-                icon="solar:shop-bold-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ) : (
-              <Iconify
-                icon="solar:shop-line-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ),
+          tabBarButton: branch ? undefined : () => <></>,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profil',
-
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <Iconify
-                icon="solar:user-bold-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ) : (
-              <Iconify
-                icon="solar:user-line-duotone"
-                size={24}
-                className={focused ? 'text-primary' : 'text-zinc-700'}
-              />
-            ),
         }}
       />
     </Tabs>

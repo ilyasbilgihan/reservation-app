@@ -52,7 +52,7 @@ const BranchItem = ({ item, onUpdate }: any) => {
       <GestureDetector gesture={composed}>
         <Animated.View
           style={{ opacity: branch?.id === item.id ? 0.5 : 1, transform: [{ scale }] }}
-          className="flex-row rounded-3xl bg-background  p-2 shadow-soft-5">
+          className="flex-row rounded-3xl bg-background  p-2">
           <Image source={{ uri: item?.thumbnail }} className="h-24 w-24 rounded-2xl " />
           <View className="flex-1 justify-center px-4">
             <Text numberOfLines={1} className="font-qs-semibold text-2xl">

@@ -153,7 +153,7 @@ const SwipeableItem = ({ asset, fetchAssets }: any) => {
             style={{
               backgroundColor: asset?.active ? 'rgb(236 253 245)' : 'rgb(255 241 242)',
             }}
-            className="flex-row rounded-xl p-4 shadow-soft-5">
+            className="flex-row rounded-xl p-4">
             <Text className="text-lg">{asset.name}</Text>
           </View>
         </TouchableOpacity>

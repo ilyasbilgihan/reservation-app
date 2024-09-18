@@ -128,7 +128,7 @@ const AssetFormBottomSheet = forwardRef<
 
   return (
     <>
-      <BottomSheet ref={ref} snapPoints={['25%', '50%']}>
+      <BottomSheet ref={ref} snapPoints={['33%', '66%']}>
         <BottomSheetView>
           <ScrollView
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>

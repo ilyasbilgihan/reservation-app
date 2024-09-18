@@ -79,7 +79,7 @@ const WorkingHourBottomSheet = () => {
       <BottomSheet ref={bottomSheetModalRef} snapPoints={['50%', '75%']}>
         <BottomSheetView>
           <ScrollView>
-            <Text className="px-7 text-2xl">Çalışma Saatlerini Ayarla</Text>
+            <Text className="p-7 pt-3.5 text-2xl">Çalışma Saatlerini Ayarla</Text>
 
             <View className="gap-4 px-7 pb-12 pt-4">
               {workingHours?.map((item) => {

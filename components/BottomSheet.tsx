@@ -3,32 +3,11 @@ import {
   BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetView,
+  BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useFocusEffect } from 'expo-router';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { BackHandler } from 'react-native';
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
-
-const CustomBackdrop = ({ animatedIndex, style }: BottomSheetBackdropProps) => {
-  // animated variables
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(animatedIndex.value, [0, 1], [0, 1], Extrapolation.CLAMP),
-  }));
-
-  // styles
-  const containerStyle = useMemo(
-    () => [
-      style,
-      {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      },
-      containerAnimatedStyle,
-    ],
-    [style, containerAnimatedStyle]
-  );
-
-  return <Animated.View style={containerStyle} />;
-};
 
 const BottomSheet = forwardRef<
   BottomSheetModal,
@@ -63,10 +42,24 @@ const BottomSheet = forwardRef<
     }, [ref, currentState])
   );
 
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        style={[props.style]}
+        disappearsOnIndex={-1}
+        appearsOnIndex={1}
+        opacity={0.5}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
   return (
     <BottomSheetModal
       backgroundStyle={{ backgroundColor: 'rgb(255 255 255)' }}
-      backdropComponent={CustomBackdrop}
+      backdropComponent={renderBackdrop}
       ref={ref}
       index={1}
       /* handleIndicatorStyle={{ backgroundColor: 'rgb(248 250 252)' }} */

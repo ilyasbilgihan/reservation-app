@@ -43,7 +43,7 @@ const Branch = () => {
   return (
     <SafeAreaView>
       {branch ? (
-        <>
+        <View className="h-full">
           <View className="w-screen p-3.5 pt-0 ">
             <ImageBackground
               source={{ uri: branch?.thumbnail }}
@@ -90,7 +90,7 @@ const Branch = () => {
           <Tabs
             value={tab}
             onValueChange={setTab}
-            className="mx-auto w-full max-w-[400px] flex-col gap-1.5">
+            className="mx-auto w-full max-w-[400px] flex-1 flex-col">
             <View className="px-7">
               <TabsList className=" w-full flex-row ">
                 <TabsTrigger value="assets" className="flex-1 ">
@@ -101,24 +101,22 @@ const Branch = () => {
                 </TabsTrigger>
               </TabsList>
             </View>
-            <TabsContent value="assets">
+            <TabsContent value="assets" className="flex-1">
               <Animated.View
-                style={{ paddingTop: 16 }}
                 entering={FadeInLeft.delay(250).duration(250)}
                 exiting={FadeOutLeft.duration(500)}>
                 <AssetTabContent />
               </Animated.View>
             </TabsContent>
-            <TabsContent value="services">
+            <TabsContent value="services" className="flex-1">
               <Animated.View
-                style={{ paddingTop: 16 }}
                 entering={FadeInRight.delay(250).duration(250)}
                 exiting={FadeOutRight.duration(500)}>
                 <ServiceTabContent />
               </Animated.View>
             </TabsContent>
           </Tabs>
-        </>
+        </View>
       ) : null}
     </SafeAreaView>
   );

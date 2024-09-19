@@ -20,7 +20,7 @@ export default function Profile() {
     <Tabs
       value={value}
       onValueChange={setValue}
-      className="mx-auto w-full max-w-[400px] flex-col gap-1.5">
+      className="mx-auto h-full w-full max-w-[400px] flex-col gap-1.5">
       <View className="px-7">
         <TabsList className=" w-full flex-row">
           <TabsTrigger value="individual" className="flex-1">
@@ -31,7 +31,7 @@ export default function Profile() {
           </TabsTrigger>
         </TabsList>
       </View>
-      <TabsContent value="individual">
+      <TabsContent value="individual" className="flex-1">
         <ScrollView>
           <Animated.View
             className="gap-4 px-7 py-7"
@@ -41,7 +41,7 @@ export default function Profile() {
           </Animated.View>
         </ScrollView>
       </TabsContent>
-      <TabsContent value="company">
+      <TabsContent value="company" className="flex-1">
         <ScrollView>
           <Animated.View
             className="p-7"

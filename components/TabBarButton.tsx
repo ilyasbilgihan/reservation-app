@@ -50,7 +50,7 @@ const TabBarButton = (props: any) => {
     };
   });
   return (
-    <Pressable {...props} className="flex-1 items-center justify-center gap-1 p-2.5">
+    <Pressable {...props} className="flex-1 items-center justify-center gap-1">
       <Animated.View style={[animatedIconStyle, { transformOrigin: 'top center', top: 0 }]}>
         {
           // @ts-ignore

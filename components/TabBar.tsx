@@ -3,7 +3,9 @@ import TabBarButton from './TabBarButton';
 
 const TabBar = ({ state, descriptors, navigation }: any) => {
   return (
-    <View className="absolute bottom-3.5 mx-3.5 flex-row rounded-3xl bg-white">
+    <View
+      style={{ borderWidth: 1, height: 70 }}
+      className="absolute bottom-0 w-full flex-row rounded-3xl border-violet-50 bg-background">
       {state.routes.map((route: any, index: any) => {
         const { options } = descriptors[route.key];
         const label =

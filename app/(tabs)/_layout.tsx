@@ -11,13 +11,13 @@ export default function TabLayout() {
   return (
     <Tabs
       tabBar={TabBar}
-      sceneContainerStyle={{ backgroundColor: '#FAF9FB' }}
+      sceneContainerStyle={{ backgroundColor: 'white', paddingBottom: 70 }}
       screenOptions={{
         headerTitleAlign: 'center',
-        headerStyle: { backgroundColor: '#FAF9FB' },
+        headerStyle: { backgroundColor: 'white' },
         headerShadowVisible: false,
         tabBarHideOnKeyboard: true,
-        tabBarInactiveTintColor: 'rgb(101 115 135)',
+        tabBarInactiveTintColor: 'rgb(101 115 134)',
         tabBarActiveTintColor: 'hsl(260 51% 41%)',
       }}>
       <Tabs.Screen

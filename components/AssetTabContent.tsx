@@ -23,7 +23,7 @@ const AssetTabContent = () => {
   useFocusEffect(
     useCallback(() => {
       fetchAssets();
-    }, [])
+    }, [branch?.id])
   );
 
   const fetchAssets = async () => {
@@ -50,7 +50,7 @@ const AssetTabContent = () => {
 
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View className="flex-row justify-between px-7">
+      <View className="flex-row justify-between p-7">
         <Text className="font-qs-semibold text-2xl">
           Rezerv {getAssetLabel(branch?.sector?.value)?.title}
         </Text>
@@ -70,7 +70,7 @@ const AssetTabContent = () => {
         />
       </View>
       {assets.length > 0 ? (
-        <View className="mt-8 gap-4">
+        <View className="gap-4 pb-7">
           {assets?.map((item: any) => (
             <SwipeableItem key={item.id} asset={item} fetchAssets={fetchAssets} />
           ))}

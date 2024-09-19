@@ -22,7 +22,7 @@ const ServiceTabContent = () => {
   useFocusEffect(
     useCallback(() => {
       fetchServices();
-    }, [])
+    }, [branch?.id])
   );
 
   const fetchServices = async () => {
@@ -49,7 +49,7 @@ const ServiceTabContent = () => {
 
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View className="flex-row justify-between px-7">
+      <View className="flex-row justify-between p-7">
         <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
         <TouchableOpacity
           activeOpacity={0.75}
@@ -67,7 +67,7 @@ const ServiceTabContent = () => {
         />
       </View>
       {services.length > 0 ? (
-        <View className="mt-8 gap-4">
+        <View className="gap-4 pb-7">
           {services?.map((item: any) => (
             <SwipeableItem key={item.id} service={item} fetchServices={fetchServices} />
           ))}

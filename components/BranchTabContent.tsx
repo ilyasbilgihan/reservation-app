@@ -10,7 +10,7 @@ import { Iconify } from '~/lib/icons/Iconify';
 import BranchFormBottomSheet from './BranchFormBottomSheet';
 import { useFocusEffect } from 'expo-router';
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { getSectorLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 import BranchItem from './BranchItem';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 
@@ -33,7 +33,10 @@ const BranchTabContent = () => {
 
     if (data) {
       setBranches(
-        data.map((b) => ({ ...b, sector: { value: b.sector, label: getSectorLabel(b.sector) } }))
+        data.map((b) => ({
+          ...b,
+          sector: { value: b.sector, label: getSectorItem(b.sector)?.value },
+        }))
       );
     }
   };

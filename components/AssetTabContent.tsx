@@ -12,7 +12,7 @@ import { Iconify } from '~/lib/icons/Iconify';
 import AssetFormBottomSheet from './AssetFormBottomSheet';
 import { Text } from './ui/text';
 
-import { getAssetLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -52,7 +52,7 @@ const AssetTabContent = () => {
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View className="flex-row justify-between p-7">
         <Text className="font-qs-semibold text-2xl">
-          Rezerv {getAssetLabel(branch?.sector?.value)?.title}
+          Rezerv {getSectorItem(branch?.sector?.value)?.title}
         </Text>
         <TouchableOpacity
           activeOpacity={0.75}
@@ -80,7 +80,7 @@ const AssetTabContent = () => {
           <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
           <View className="items-center">
             <Text className="text-muted-foreground">
-              Henüz bir {getAssetLabel(branch?.sector?.value)?.singular} eklememişsiniz.
+              Henüz bir {getSectorItem(branch?.sector?.value)?.singular} eklememişsiniz.
             </Text>
             <Text className="text-muted-foreground">
               Eklemek isterseniz sağ üstteki artı butonuna tıklayınız.

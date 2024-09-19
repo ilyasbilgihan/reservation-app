@@ -19,7 +19,7 @@ import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 import WorkingHourBottomSheet from '~/components/WorkingHourBottomSheet';
 
-import { getAssetLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import AssetFormBottomSheet from '~/components/AssetFormBottomSheet';
 import AssetTabContent from '~/components/AssetTabContent';
@@ -94,7 +94,7 @@ const Branch = () => {
             <View className="px-7">
               <TabsList className=" w-full flex-row ">
                 <TabsTrigger value="assets" className="flex-1 ">
-                  <Text>{getAssetLabel(branch?.sector?.value)?.title}</Text>
+                  <Text>{getSectorItem(branch?.sector?.value)?.title}</Text>
                 </TabsTrigger>
                 <TabsTrigger value="services" className="flex-1 ">
                   <Text>Hizmetlerim</Text>

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
-import { getSectorLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 import { Text } from './ui/text';
 
 const BranchFormBottomSheet = forwardRef<
@@ -202,7 +202,7 @@ const BranchFormBottomSheet = forwardRef<
                 <Select
                   defaultValue={formData.sector}
                   onValueChange={(item: any) => {
-                    let lbl = getSectorLabel(item.value);
+                    let lbl = getSectorItem(item.value)?.value;
                     setField('sector', { value: item.value, label: lbl });
                   }}>
                   <SelectTrigger>

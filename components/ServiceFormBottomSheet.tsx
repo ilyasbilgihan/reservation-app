@@ -16,7 +16,7 @@ import { Button } from './ui/button';
 import { Text } from './ui/text';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
-import { getAssetLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 
 const ServiceFormBottomSheet = forwardRef<
   BottomSheetModal,
@@ -121,7 +121,7 @@ const ServiceFormBottomSheet = forwardRef<
               <View className="gap-1">
                 <Label nativeID="name">Hizmet Adı</Label>
                 <Input
-                  placeholder={getAssetLabel(branch?.sector?.value)?.service}
+                  placeholder={getSectorItem(branch?.sector?.value)?.service}
                   value={formData.name}
                   onChangeText={(value) => setField('name', value)}
                   aria-labelledby="name"

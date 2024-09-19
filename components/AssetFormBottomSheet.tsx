@@ -14,7 +14,7 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '~/utils/supabase';
-import { getAssetLabel } from '~/utils/getLabels';
+import { getSectorItem } from '~/utils/getLabels';
 import { Text } from './ui/text';
 
 const AssetFormBottomSheet = forwardRef<
@@ -164,10 +164,10 @@ const AssetFormBottomSheet = forwardRef<
               </View> */}
               <View className="gap-1">
                 <Label nativeID="name" style={{ textTransform: 'capitalize' }}>
-                  {getAssetLabel(branch?.sector?.value)?.singular} Adı
+                  {getSectorItem(branch?.sector?.value)?.singular} Adı
                 </Label>
                 <Input
-                  placeholder={getAssetLabel(branch?.sector?.value)?.placeholder}
+                  placeholder={getSectorItem(branch?.sector?.value)?.placeholder}
                   value={formData.name}
                   onChangeText={(value) => setField('name', value)}
                   aria-labelledby="name"
@@ -190,7 +190,7 @@ const AssetFormBottomSheet = forwardRef<
                     </TooltipTrigger>
                     <TooltipContent insets={contentInsets}>
                       <Text className="text-sm text-slate-700">
-                        Bu {getAssetLabel(branch?.sector?.value)?.singular} için başlangıç ücreti.
+                        Bu {getSectorItem(branch?.sector?.value)?.singular} için başlangıç ücreti.
                       </Text>
                     </TooltipContent>
                   </Tooltip>

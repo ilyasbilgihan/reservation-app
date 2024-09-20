@@ -5,6 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { getNetworkStateAsync } from 'expo-network';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
+import Animated, { FadeInDown, FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { supabase } from '~/utils/supabase';
@@ -20,7 +21,7 @@ const SECTORS = ['Grooming', 'Accommodation', 'Rental', 'Food'];
 import ListBranches from '~/components/ListBranches';
 
 export default function Home() {
-  const { session, branch, location, setLocation } = useGlobalContext();
+  const { session, setSession, branch, location, setLocation } = useGlobalContext();
   const [profile, setProfile] = useState<any>({});
   const [selectedSector, setSelectedSector] = useState<string>('Grooming');
   const [branches, setBranches] = useState<any>([]);
@@ -79,12 +80,11 @@ export default function Home() {
         long: location?.longitude,
       })
       .eq('sector', selectedSector)
-      .select('*, working_hour(*)');
+      .select('*, working_hour(*)')
+      .limit(5);
 
     if (error) {
-      console.log(error);
     } else {
-      console.log(data);
       setBranches(data);
     }
   };
@@ -93,7 +93,9 @@ export default function Home() {
     <SafeAreaView>
       <ScrollView>
         <View className="mx-7 flex-row items-center justify-between pt-7">
-          <View className="flex-1 flex-row items-center gap-2 pr-2">
+          <Animated.View
+            entering={FadeInLeft.duration(1000)}
+            className="flex-1 flex-row items-center gap-2 pr-2">
             <Image
               source={profile?.avatar ? { uri: profile?.avatar } : require('~/assets/no-image.png')}
               className="h-14 w-14 rounded-2xl border border-input bg-white"
@@ -104,26 +106,31 @@ export default function Home() {
                 {profile?.full_name}
               </Text>
             </View>
-          </View>
+          </Animated.View>
           <LocationPicker
             defaultRegion={location}
             onLocationSelect={(location: any) => {
               setLocation(location);
             }}>
-            <View className="h-12 flex-row items-center gap-2 rounded-xl border border-input bg-background px-4">
+            <Animated.View
+              entering={FadeInRight.duration(1000)}
+              className="h-12 flex-row items-center gap-2 rounded-xl border border-input bg-background px-4">
               <Iconify icon="solar:map-point-bold-duotone" size={24} className="text-primary" />
               {location?.label ? (
                 <Text className="font-qs-semibold text-slate-500">{location.label}</Text>
               ) : null}
-            </View>
+            </Animated.View>
           </LocationPicker>
         </View>
-        <Text className="px-7 pb-3.5 pt-14 text-4xl leading-3">
-          Hangi <Text className="bg-violet-200 font-qs-semibold text-4xl">sektörde</Text>{' '}
-          <Text className="bg-amber-200 font-qs-semibold text-4xl">rezervasyona</Text> ihtiyacın
-          var?
-        </Text>
-        <FlatList
+        <Animated.View entering={FadeInUp.duration(1000)}>
+          <Text className="px-7 pb-3.5 pt-14 font-qs-medium text-4xl leading-3">
+            Hangi <Text className="bg-violet-200 font-qs-semibold text-4xl">sektörde</Text>{' '}
+            <Text className="bg-amber-200 font-qs-semibold text-4xl">rezervasyona</Text> ihtiyacın
+            var?
+          </Text>
+        </Animated.View>
+        <Animated.FlatList
+          entering={FadeInDown.duration(1000)}
           data={SECTORS}
           contentContainerStyle={{
             paddingHorizontal: 24,
@@ -151,9 +158,7 @@ export default function Home() {
           keyExtractor={(item) => 'sector-' + item}
           /* extraData={selectedId}  // rerender when selectedId changes */
         />
-        <View>
-          <ListBranches branches={branches} />
-        </View>
+        <ListBranches branches={branches} />
       </ScrollView>
     </SafeAreaView>
   );

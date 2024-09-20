@@ -1,16 +1,24 @@
 import React from 'react';
 import { View, TouchableOpacity, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import Animated, { FadeIn, FadeInRight, FadeOut } from 'react-native-reanimated';
+
 import { Iconify } from '~/lib/icons/Iconify';
 import { Text } from './ui/text';
 
 const ListBranches = ({ branches }: any) => {
+  const router = useRouter();
   return (
     <>
       {branches?.length > 0 ? (
         <View className="gap-7 p-7">
-          <Text className="text-2xl">Bu sektördeki sana en yakın işletmeler</Text>
+          <Animated.Text
+            entering={FadeInRight.delay(0).duration(1000)}
+            className="font-qs-medium text-2xl">
+            Bu sektördeki sana en yakın işletmeler
+          </Animated.Text>
 
-          {branches.map((item: any) => {
+          {branches.map((item: any, index: number) => {
             let now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             let working_hour = item?.working_hour.find(
               (wh: any) => wh.day == new Date().toLocaleString('en-us', { weekday: 'long' })
@@ -21,8 +29,18 @@ const ListBranches = ({ branches }: any) => {
                 ? (item.dist_meters / 1000).toFixed(1) + ' km'
                 : item.dist_meters.toFixed(0) + ' m';
             return (
-              <TouchableOpacity key={item.id} activeOpacity={0.75}>
-                <View
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.75}
+                onPress={() => {
+                  /* router.push(`/branch-detail/${item.id}`); */
+                  router.push({
+                    pathname: '/branch-detail/[id]',
+                    params: { id: item.id, branch: JSON.stringify(item) },
+                  });
+                }}>
+                <Animated.View
+                  entering={FadeInRight.delay(index * 250).duration(1000)}
                   style={{
                     shadowColor: 'rgba(20,20,20,0.20)',
                     elevation: 20,
@@ -85,19 +103,22 @@ const ListBranches = ({ branches }: any) => {
                       </View>
                     </View>
                   </View>
-                </View>
+                </Animated.View>
               </TouchableOpacity>
             );
           })}
         </View>
       ) : (
-        <View className="items-center gap-4 p-12">
+        <Animated.View
+          exiting={FadeOut.duration(500)}
+          entering={FadeIn.delay(0).duration(1000)}
+          className="items-center gap-4 p-12">
           <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
           <Text className="text-center text-muted-foreground">
             Bu sektörde hizmet veren işletme bulunamadı. Lütfen konum seçin veya başka bir sektör
             deneyin.
           </Text>
-        </View>
+        </Animated.View>
       )}
     </>
   );

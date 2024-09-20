@@ -65,11 +65,20 @@ const LocationPicker = ({ children, onLocationSelect, hideLabelInput, defaultReg
         snapPoints={['50%', '75%']}>
         <BottomSheetView>
           <View className="gap-7 px-7">
-            <View className="flex-row items-center justify-between">
-              <Text className="pt-3.5 text-2xl">Konum Belirle</Text>
+            <View className="flex-row items-center justify-between pt-3.5">
+              <Text className="text-2xl">Konum Belirle</Text>
               <TouchableOpacity activeOpacity={0.75} onPress={grantAccessLocation}>
-                <View className="h-10 w-10 items-center justify-center rounded-xl bg-cyan-600">
-                  <Iconify icon="tabler:location-check" size={24} className="text-cyan-50" />
+                <View className="flex-row items-center justify-center gap-2 rounded-lg bg-primary px-3.5 py-2">
+                  <Iconify
+                    icon="solar:shield-check-line-duotone"
+                    size={24}
+                    className="text-cyan-50"
+                  />
+                  <Text
+                    style={{ lineHeight: 16 }}
+                    className="font-qs-semibold text-sm text-violet-100">
+                    Konum izni
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>

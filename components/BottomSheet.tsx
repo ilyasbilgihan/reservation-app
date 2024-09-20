@@ -10,13 +10,13 @@ import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { BackHandler } from 'react-native';
 
 const BottomSheet = forwardRef<
-  BottomSheetModal,
-  {
+  React.ElementRef<typeof BottomSheetModal>,
+  React.ComponentPropsWithoutRef<typeof BottomSheetModal> & {
     footerComponent?: React.FC<BottomSheetFooterProps> | undefined;
     snapPoints?: string[];
     children: React.ReactNode;
   }
->(({ footerComponent, snapPoints, children }, ref) => {
+>(({ footerComponent, snapPoints, children, ...props }, ref) => {
   const snapPts = useMemo(() => (snapPoints ? snapPoints : ['66%', '96%']), []);
 
   const [currentState, setCurrentState] = useState<number>(-1);
@@ -65,7 +65,8 @@ const BottomSheet = forwardRef<
       /* handleIndicatorStyle={{ backgroundColor: 'rgb(248 250 252)' }} */
       footerComponent={footerComponent}
       snapPoints={snapPts}
-      onChange={handleSheetChanges}>
+      onChange={handleSheetChanges}
+      {...props}>
       <BottomSheetView>{children}</BottomSheetView>
     </BottomSheetModal>
   );

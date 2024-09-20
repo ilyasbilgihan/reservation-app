@@ -5,8 +5,8 @@ import { supabase } from '~/utils/supabase';
 import { getItem, setItem } from '~/core/storage';
 
 type Location = {
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   label: string;
 };
 
@@ -25,8 +25,8 @@ export const GlobalProvider: React.FC<PropsWithChildren> = (props) => {
   const [session, setSession] = useState<Session | null>(null);
   const [branch, setBranch] = useState<any>(null);
   const [location, setLocation] = useState<Location>({
-    latitude: 37.782,
-    longitude: 29.097,
+    latitude: null,
+    longitude: null,
     label: 'Konum Seçilmedi',
   });
 

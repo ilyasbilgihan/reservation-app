@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import * as Location from 'expo-location';
-import MapView, { MapMarker } from 'react-native-maps';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import MapView from 'react-native-maps';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
 
@@ -15,12 +15,12 @@ import BottomSheet from './BottomSheet';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Button } from './ui/button';
 
-const LocationPicker = ({ children, onLocationSelect }: any) => {
-  const { session, branch, location, setLocation } = useGlobalContext();
+const LocationPicker = ({ children, onLocationSelect, hideLabelInput, defaultRegion }: any) => {
+  const { location } = useGlobalContext();
   const [label, setLabel] = useState('');
   const [centerPosition, setCenterPosition] = useState<any>({
-    latitude: location?.latitude || 37.77746715,
-    longitude: location?.longitude || 29.0696798,
+    latitude: defaultRegion?.latitude || 37.77746715,
+    longitude: defaultRegion?.longitude || 29.0696798,
     latitudeDelta: 0.08,
     longitudeDelta: 0.08,
   });
@@ -73,16 +73,18 @@ const LocationPicker = ({ children, onLocationSelect }: any) => {
                 </View>
               </TouchableOpacity>
             </View>
-            <View className="gap-1">
-              <Label nativeID="name">Konum Etiketi</Label>
-              <Input
-                placeholder="İş yeri, Evim, Pamukkale..."
-                value={label}
-                onChangeText={(value) => setLabel(value)}
-                aria-labelledby="name"
-                aria-errormessage="name"
-              />
-            </View>
+            {hideLabelInput ? null : (
+              <View className="gap-1">
+                <Label nativeID="name">Konum Etiketi</Label>
+                <Input
+                  placeholder="İş yeri, Evim, Pamukkale..."
+                  value={label}
+                  onChangeText={(value) => setLabel(value)}
+                  aria-labelledby="name"
+                  aria-errormessage="name"
+                />
+              </View>
+            )}
             <View className="aspect-square w-full">
               {location ? (
                 <MapView

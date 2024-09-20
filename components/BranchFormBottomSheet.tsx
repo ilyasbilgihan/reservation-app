@@ -25,6 +25,7 @@ import {
 import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import { getSectorItem } from '~/utils/getLabels';
 import { Text } from './ui/text';
+import LocationPicker from './LocationPicker';
 
 const BranchFormBottomSheet = forwardRef<
   BottomSheetModal,
@@ -267,6 +268,26 @@ const BranchFormBottomSheet = forwardRef<
                   aria-labelledby="city"
                   aria-errormessage="city"
                 />
+              </View>
+              <View className="gap-1">
+                <Label nativeID="city">Konum Seç</Label>
+                <LocationPicker
+                  defaultRegion={{ latitude: branch?.lat, longitude: branch?.long }}
+                  hideLabelInput
+                  onLocationSelect={(location: any) => {
+                    setField('location', `POINT(${location.longitude} ${location.latitude})`);
+                  }}>
+                  <View className="h-12 flex-row items-center gap-2 rounded-md border border-input bg-background px-4">
+                    <Iconify
+                      icon="solar:point-on-map-bold-duotone"
+                      size={24}
+                      className="text-primary"
+                    />
+                    <Text className="font-qs-semibold text-slate-500">
+                      {formData.location ? ' Seçili Konumu Değiştir' : `Haritayı Aç`}
+                    </Text>
+                  </View>
+                </LocationPicker>
               </View>
               <View className="gap-1">
                 <View className="flex-row items-center gap-2">

@@ -30,6 +30,7 @@ export default function Home() {
     (async () => {
       const networkState = await getNetworkStateAsync();
       if (!networkState.isConnected) {
+        setSession(null);
         router.replace('/auth');
       }
     })();

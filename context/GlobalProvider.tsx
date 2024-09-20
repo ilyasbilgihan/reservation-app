@@ -32,24 +32,32 @@ export const GlobalProvider: React.FC<PropsWithChildren> = (props) => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('get session', session);
       setSession(session);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('auth change', session);
       setSession(session);
     });
 
     (async () => {
       const branchId = await getItem('branch');
       if (branchId) setBranch(branchId);
+
+      const loc = await getItem('location');
+      console.log('loc from storage', loc);
+      if (loc) setLocation(loc);
     })();
   }, []);
 
   useEffect(() => {
     setItem('branch', branch);
   }, [branch]);
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      setItem('location', location);
+    }
+  }, [location]);
 
   return (
     <GlobalContext.Provider

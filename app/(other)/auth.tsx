@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -22,14 +22,7 @@ import { getNetworkStateAsync } from 'expo-network';
 const SignIn = () => {
   const { session } = useGlobalContext();
 
-  useEffect(() => {
-    (async () => {
-      const networkState = await getNetworkStateAsync();
-      if (session && networkState.isConnected) {
-        router.replace('/');
-      }
-    })();
-  }, [session]);
+  if (session) return <Redirect href="/" />;
 
   const [formState, setFormState] = useState('login');
   const [formData, setFormData] = useState({

@@ -46,13 +46,19 @@ const BranchItem = ({ item, onUpdate }: any) => {
       }
     });
   const composed = Gesture.Race(tap, longPress);
-
   return (
     <>
       <GestureDetector gesture={composed}>
         <Animated.View
-          style={{ opacity: branch?.id === item.id ? 0.5 : 1, transform: [{ scale }] }}
-          className="flex-row rounded-3xl bg-background  p-2">
+          style={{
+            shadowColor: 'rgba(20,20,20,0.20)',
+            elevation: 20,
+            shadowOffset: { width: 0, height: 10 },
+            shadowRadius: 13.16,
+            opacity: branch?.id === item.id ? 0.5 : 1,
+            transform: [{ scale }],
+          }}
+          className="flex-row rounded-3xl bg-white p-2">
           <Image source={{ uri: item?.thumbnail }} className="h-24 w-24 rounded-2xl " />
           <View className="flex-1 justify-center px-4">
             <Text numberOfLines={1} className="font-qs-semibold text-2xl">

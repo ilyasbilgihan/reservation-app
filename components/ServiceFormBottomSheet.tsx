@@ -170,9 +170,9 @@ const ServiceFormBottomSheet = forwardRef<
                   </Tooltip>
                 </View>
                 <Input
-                  placeholder="1"
+                  placeholder="0"
                   keyboardType="numeric"
-                  value={formData.time_span}
+                  value={'' + formData.time_span}
                   onChangeText={(value) => {
                     setField('time_span', value);
                   }}

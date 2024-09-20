@@ -56,7 +56,7 @@ const BranchTabContent = () => {
   }, []);
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-center justify-between px-7">
         <Text className="font-qs-semibold text-2xl">Şubelerim</Text>
         <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
           <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
@@ -70,7 +70,7 @@ const BranchTabContent = () => {
         />
       </View>
       {branches.length > 0 ? (
-        <View className="mt-4 gap-4">
+        <View className="mt-4 gap-4 px-7">
           {branches.map((item: any) => (
             <BranchItem
               item={item}

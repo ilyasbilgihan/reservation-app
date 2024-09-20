@@ -44,7 +44,7 @@ export default function Profile() {
       <TabsContent value="company" className="flex-1">
         <ScrollView>
           <Animated.View
-            className="p-7"
+            className="py-7"
             entering={FadeInRight.delay(250).duration(250)}
             exiting={FadeOutRight.duration(500)}>
             <BranchTabContent />

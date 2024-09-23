@@ -71,7 +71,11 @@ const Text = React.forwardRef<
       }
       return (
         <RNAnimated.Text
-          className={cn('text-base text-foreground web:select-text', textClass, className)}
+          className={cn(
+            'font-qs-medium text-base text-foreground web:select-text',
+            textClass,
+            className
+          )}
           ref={ref}
           style={StyleSheet.flatten([style, { opacity: fadeAnim }])}
           {...props}>

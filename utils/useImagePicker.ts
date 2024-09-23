@@ -2,8 +2,14 @@ import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 
-export default function useImagePicker(aspect = <[number, number]>[1, 1], maxSize = 2000000) {
-  const [image, setImage] = useState<ImagePicker.ImagePickerAsset>();
+export default function useImagePicker(
+  aspect = <[number, number]>[1, 1],
+  maxSize = 2000000,
+  multiple = false
+) {
+  const [image, setImage] = useState<
+    ImagePicker.ImagePickerAsset | ImagePicker.ImagePickerAsset[]
+  >();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -21,7 +27,16 @@ export default function useImagePicker(aspect = <[number, number]>[1, 1], maxSiz
 
       if (!result.canceled && result.assets[0].fileSize) {
         if (result.assets[0].fileSize <= maxSize) {
-          setImage(result.assets[0]);
+          if (multiple) {
+            let img = result.assets[0];
+            if (Array.isArray(image)) {
+              setImage([...image, img]);
+            } else {
+              setImage([img]);
+            }
+          } else {
+            setImage(result.assets[0]);
+          }
         } else {
           Alert.alert('Image size exceeded', 'Please select an image smaller than 2MB');
         }

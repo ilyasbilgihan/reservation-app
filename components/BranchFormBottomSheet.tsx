@@ -1,8 +1,8 @@
-import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
-import { View, TouchableOpacity, Image, Alert, Platform, Pressable } from 'react-native';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import { View, TouchableOpacity, Image, Alert, Pressable } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { BottomSheetView, BottomSheetModal, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
+import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
 import BottomSheet from './BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
@@ -22,10 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-import { supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
+import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import { getSectorItem } from '~/utils/getLabels';
 import { Text } from './ui/text';
 import LocationPicker from './LocationPicker';
+import { Textarea } from './ui/textarea';
+
+const NUM_OF_MAX_IMAGES = 4;
 
 const BranchFormBottomSheet = forwardRef<
   BottomSheetModal,
@@ -35,9 +38,15 @@ const BranchFormBottomSheet = forwardRef<
   }
 >(({ onCreate, branch }, ref) => {
   const { image, setImage, pickImage } = useImagePicker();
+  const {
+    image: images,
+    setImage: setImages,
+    pickImage: pickImages,
+  } = useImagePicker([1, 1], 2000000, true);
   const { session, setBranch } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
+  const [existingImages, setExistingImages] = useState(branch?.branch_image || []);
   const [formData, setFormData] = useState({
     name: branch?.name || '',
     phone: branch?.phone || '',
@@ -47,6 +56,7 @@ const BranchFormBottomSheet = forwardRef<
     thumbnail: branch?.thumbnail || '',
     reservation_period: branch?.reservation_period || '',
     sector: branch?.sector || '',
+    details: branch?.details || '',
   });
   const setField = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
@@ -58,6 +68,44 @@ const BranchFormBottomSheet = forwardRef<
     bottom: insets.bottom,
     left: 12,
     right: 12,
+  };
+
+  const handleImageGallery = async (id: any) => {
+    let tmp = branch?.branch_image;
+    let deleted = tmp?.filter((item: any) => !existingImages.includes(item));
+    let err = null;
+
+    if (deleted) {
+      for (let i = 0; i < deleted.length; i++) {
+        const image = deleted[i];
+        const { error } = await deleteImage('branch_image/' + image.uri.split('branch_image/')[1]);
+        if (error) {
+          err = error;
+        } else {
+          await supabase.from('branch_image').delete().eq('uri', image.uri).select('*');
+        }
+      }
+    }
+
+    if (Array.isArray(images) && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        const { url, error } = await uploadImageToSupabaseBucket('branch_image', image);
+        if (error) {
+          err = error;
+        } else {
+          const { error: insErr } = await supabase.from('branch_image').insert({
+            branch_id: id,
+            uri: url,
+          });
+          if (insErr) {
+            err = insErr;
+          }
+        }
+      }
+    }
+
+    return { error: err };
   };
 
   const handleCreateBranch = async () => {
@@ -73,24 +121,37 @@ const BranchFormBottomSheet = forwardRef<
 
     let uploadedImageUrl = null;
     if (image !== undefined) {
+      //@ts-ignore
       const { url, error } = await uploadImageToSupabaseBucket('branch_thumbnails', image);
       if (error) {
         console.log('image upload error', error);
+        setLoading(false);
+        return;
       } else {
         uploadedImageUrl = url;
       }
     }
-    /* 
-    // if there is a new image or user wants to delete own image
-    if (uploadedImageUrl) {
-      // delete image from bucket
-      const { error } = await deleteImage('avatars/' + tempImage);
-        if (error) {
-          console.log('error deleting image', error);
-        }
-    } */
 
     if (branch) {
+      const { error: galleryError } = await handleImageGallery(branch?.id);
+      if (galleryError) {
+        console.log('gallery error', galleryError);
+        setLoading(false);
+        return;
+      }
+      // if there is a new image or user wants to delete own image
+      if (uploadedImageUrl) {
+        // delete image from bucket
+        const { error } = await deleteImage(
+          'branch_thumbnails/' + formData.thumbnail.split('branch_thumbnails/')[1]
+        );
+        if (error) {
+          console.log('error deleting image', error);
+          setLoading(false);
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from('branch')
         .update({
@@ -103,6 +164,7 @@ const BranchFormBottomSheet = forwardRef<
       if (error) {
         Alert.alert('Error update', error.message);
         console.log('error update', error.message);
+        setLoading(false);
         return;
       } else {
         setBranch({
@@ -110,6 +172,8 @@ const BranchFormBottomSheet = forwardRef<
           id: branch?.id,
           thumbnail: uploadedImageUrl || formData.thumbnail,
         });
+        setImage(undefined);
+        setImages(undefined);
       }
     } else {
       const { data, error } = await supabase
@@ -118,6 +182,7 @@ const BranchFormBottomSheet = forwardRef<
           ...formData,
           sector: formData.sector.value,
           thumbnail: uploadedImageUrl || formData.thumbnail,
+          owner_id: session?.user.id,
         })
         .select('id')
         .single();
@@ -125,9 +190,10 @@ const BranchFormBottomSheet = forwardRef<
       if (error) {
         Alert.alert('Error create', error.message);
         console.log('error create', error.message);
+        setLoading(false);
         return;
       } else {
-        const { error } = await supabase.from('working_hour').insert([
+        const { error: workingHourError } = await supabase.from('working_hour').insert([
           { branch_id: data.id, day: 'Monday' },
           { branch_id: data.id, day: 'Tuesday' },
           { branch_id: data.id, day: 'Wednesday' },
@@ -136,7 +202,18 @@ const BranchFormBottomSheet = forwardRef<
           { branch_id: data.id, day: 'Saturday' },
           { branch_id: data.id, day: 'Sunday' },
         ]);
-        console.log(data.id, error);
+        if (workingHourError) {
+          console.log('working hour error', workingHourError);
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await handleImageGallery(data.id);
+        if (error) {
+          console.log('gallery create error', error);
+          setLoading(false);
+          return;
+        }
       }
     }
 
@@ -154,13 +231,28 @@ const BranchFormBottomSheet = forwardRef<
     return false;
   }, [formData.phone]);
 
+  useEffect(() => {
+    setExistingImages(branch?.branch_image || []);
+    setFormData({
+      name: branch?.name || '',
+      phone: branch?.phone || '',
+      country: branch?.country || '',
+      city: branch?.city || '',
+      location: branch?.location || '',
+      thumbnail: branch?.thumbnail || '',
+      reservation_period: branch?.reservation_period || '',
+      sector: branch?.sector || '',
+      details: branch?.details || '',
+    });
+  }, [branch]);
+
   return (
     <>
       <BottomSheet ref={ref}>
         <BottomSheetView>
           <ScrollView>
-            <View className="gap-4 p-7">
-              <View>
+            <View className="gap-3.5 p-7">
+              <View className="gap-1">
                 <Label nativeID="thumbnail">Küçük Resim</Label>
                 <TouchableOpacity
                   activeOpacity={0.75}
@@ -168,6 +260,7 @@ const BranchFormBottomSheet = forwardRef<
                   className="aspect-square w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-background">
                   {formData.thumbnail || image ? (
                     <Image
+                      //@ts-ignore
                       source={image ? { uri: image.uri } : { uri: formData.thumbnail }}
                       className="h-full w-full"
                     />
@@ -189,6 +282,56 @@ const BranchFormBottomSheet = forwardRef<
                 ) : null}
               </View>
               <View className="gap-1">
+                <Label nativeID="gallery">Resim Galerisi</Label>
+                <View className="w-full flex-row items-center justify-between gap-3.5">
+                  {
+                    // array from num_of_max_images
+                    Array.from({ length: NUM_OF_MAX_IMAGES }).map((_, index) => {
+                      let allImages = [
+                        ...(Array.isArray(existingImages) ? existingImages : []),
+                        ...(Array.isArray(images) ? images : []),
+                      ];
+                      return (
+                        <TouchableOpacity
+                          activeOpacity={0.75}
+                          onPress={() => {
+                            if (existingImages[index]) {
+                              setExistingImages(
+                                existingImages.filter((_: any, i: any) => i !== index)
+                              );
+                            } else if (
+                              Array.isArray(images) &&
+                              images[index - existingImages.length]
+                            ) {
+                              setImages(
+                                images.filter((_, i) => i !== index - existingImages.length)
+                              );
+                            } else {
+                              pickImages();
+                            }
+                          }}
+                          key={index}
+                          className="aspect-square flex-1 items-center justify-center overflow-hidden rounded-lg border border-input bg-background">
+                          {allImages[index]?.uri ? (
+                            <Image
+                              //@ts-ignore
+                              source={{ uri: allImages[index]?.uri }}
+                              className="h-full w-full"
+                            />
+                          ) : (
+                            <Iconify
+                              icon="solar:gallery-add-bold-duotone"
+                              size={20}
+                              className=" text-slate-400"
+                            />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })
+                  }
+                </View>
+              </View>
+              <View className="gap-1">
                 <Label nativeID="name">Şube Adı</Label>
                 <Input
                   placeholder="Fatih Berber Salonu"
@@ -196,6 +339,22 @@ const BranchFormBottomSheet = forwardRef<
                   onChangeText={(value) => setField('name', value)}
                   aria-labelledby="name"
                   aria-errormessage="name"
+                />
+              </View>
+              <View className="gap-1">
+                <View className="flex-row items-end justify-between">
+                  <Label nativeID="details">Şube Detayı</Label>
+                  <Text className="text-sm">{formData.details.length}/256</Text>
+                </View>
+                <Textarea
+                  placeholder="Müşterilerinizi etkileyecek bir tanıtım yazısı ekle."
+                  value={formData.details}
+                  onChangeText={(item: any) => {
+                    if (item.length <= 256) {
+                      setField('details', item);
+                    }
+                  }}
+                  aria-labelledby="details"
                 />
               </View>
               <View className="gap-1">

@@ -27,7 +27,7 @@ const BranchTabContent = () => {
   const fetchBranches = async () => {
     const { data, error } = await supabase
       .from('branch_with_location')
-      .select('*')
+      .select('*, branch_image(*)')
       .eq('owner_id', session?.user.id)
       .order('created_at', { ascending: false });
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { View, ImageBackground, ScrollView } from 'react-native';
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   FadeIn,
@@ -8,6 +8,8 @@ import Animated, {
   FadeInLeft,
   FadeInRight,
   FadeInUp,
+  interpolate,
+  useSharedValue,
 } from 'react-native-reanimated';
 
 import { Text } from '~/components/ui/text';
@@ -38,7 +40,7 @@ const BranchDetail = () => {
   const fetchBranch = async () => {
     const { data, error } = await supabase
       .from('branch_with_location')
-      .select('*, working_hour(*), service(*), asset(*), branch_image(*)')
+      .select('*, working_hour(*), branch_image(*)')
       .eq('id', id)
       .order('id', { ascending: true, referencedTable: 'working_hour' })
       .single();
@@ -62,58 +64,54 @@ const BranchDetail = () => {
           <ScrollView>
             {branch ? (
               <View className="pb-24">
-                <Animated.View entering={FadeInRight.duration(1000)}>
-                  <Animated.View entering={FadeInUp.duration(1000)} className="w-screen p-3.5">
-                    <ImageBackground
-                      source={{ uri: branch?.thumbnail }}
-                      style={{ aspectRatio: 1 }}
-                      className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
-                      <View>
-                        {is_open ? (
+                <Animated.View entering={FadeInUp.duration(1000)} className="w-screen p-3.5">
+                  <ImageBackground
+                    source={{ uri: branch?.thumbnail }}
+                    style={{ aspectRatio: 1 }}
+                    className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
+                    <Animated.View entering={FadeInDown.duration(1000)}>
+                      {is_open ? (
+                        <Text
+                          style={{ lineHeight: 16 }}
+                          className="ml-auto rounded-lg bg-emerald-400 px-3.5 py-1.5 font-qs-semibold text-sm text-emerald-50">
+                          Şuan açık
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{ lineHeight: 16 }}
+                          className="ml-auto rounded-lg bg-slate-400 px-3.5 py-1.5 font-qs-semibold text-sm text-slate-100">
+                          Kapalı
+                        </Text>
+                      )}
+                    </Animated.View>
+                    <View>
+                      <Animated.View
+                        entering={FadeInDown.duration(1000)}
+                        style={{ borderRadius: 10 }}
+                        className="w-full gap-2 bg-white p-4">
+                        <View className="flex-row items-center justify-between">
                           <Text
-                            style={{ lineHeight: 16 }}
-                            className="ml-auto rounded-lg bg-emerald-400 px-3.5 py-1.5 font-qs-semibold text-sm text-emerald-50">
-                            Şuan açık
+                            numberOfLines={2}
+                            className="flex-1 font-qs-semibold text-2xl font-semibold">
+                            {branch.name}
                           </Text>
-                        ) : (
-                          <Text
-                            style={{ lineHeight: 16 }}
-                            className="ml-auto rounded-lg bg-slate-400 px-3.5 py-1.5 font-qs-semibold text-sm text-slate-100">
-                            Kapalı
-                          </Text>
-                        )}
-                      </View>
-                      <View>
-                        <Animated.View entering={FadeInLeft.duration(1000)}>
-                          <Animated.View
-                            entering={FadeInDown.duration(1000)}
-                            style={{ borderRadius: 10 }}
-                            className="w-full gap-2 bg-white p-4">
-                            <View className="flex-row items-center justify-between">
-                              <Text
-                                numberOfLines={2}
-                                className="flex-1 font-qs-semibold text-2xl font-semibold">
-                                {branch.name}
-                              </Text>
-                            </View>
-                            <View className="flex-row items-center justify-between">
-                              <View className="flex-row  gap-2">
-                                <Iconify
-                                  icon="solar:map-point-wave-bold-duotone"
-                                  size={24}
-                                  className="text-primary"
-                                />
-                                <Text>
-                                  {branch.city}, {branch.country}
-                                </Text>
-                              </View>
-                              {/* <Text>todo: rating</Text> */}
-                            </View>
-                          </Animated.View>
-                        </Animated.View>
-                      </View>
-                    </ImageBackground>
-                  </Animated.View>
+                        </View>
+                        <View className="flex-row items-center justify-between">
+                          <View className="flex-row  gap-2">
+                            <Iconify
+                              icon="solar:map-point-wave-bold-duotone"
+                              size={24}
+                              className="text-primary"
+                            />
+                            <Text>
+                              {branch.city}, {branch.country}
+                            </Text>
+                          </View>
+                          {/* <Text>todo: rating</Text> */}
+                        </View>
+                      </Animated.View>
+                    </View>
+                  </ImageBackground>
                 </Animated.View>
                 <View className="gap-7 px-7 pt-3.5">
                   {branch?.branch_image.length > 0 ? (
@@ -156,16 +154,30 @@ const BranchDetail = () => {
                     <Text className="m-0 p-0">{branch.details}</Text>
                   </Animated.View>
                   <Animated.View entering={FadeInUp.duration(1000)} className="gap-3.5">
-                    <Text className="font-qs-semibold text-2xl">Çalışma Saatlerimiz</Text>
-                    <View className="gap-3.5">
+                    <Text className="bg-background font-qs-semibold text-2xl">
+                      Çalışma Saatlerimiz
+                    </Text>
+                    <View className="gap-1">
                       {branch.working_hour?.map((item: any) => {
                         let isClosed =
                           (item.opening === '00:00' || item.opening == null) &&
                           (item.closing === '00:00' || item.closing == null);
                         return (
-                          <View key={item.id} className="flex-row items-center justify-between">
-                            <Text>{getDayLabel(item.day)}</Text>
-                            <Text>{isClosed ? 'Kapalı' : item.opening + ' - ' + item.closing}</Text>
+                          <View
+                            style={
+                              working_hour.day == item.day
+                                ? {}
+                                : {
+                                    borderColor: `transparent`,
+                                    backgroundColor: `white`,
+                                  }
+                            }
+                            key={item.id}
+                            className="flex-row items-center justify-between rounded-xl border border-input bg-background px-7 py-3.5">
+                            <Text className="font-qs-semibold">{getDayLabel(item.day)}</Text>
+                            <Text className="text-slate-600">
+                              {isClosed ? 'Kapalı' : item.opening + ' - ' + item.closing}
+                            </Text>
                           </View>
                         );
                       })}
@@ -198,8 +210,12 @@ const BranchDetail = () => {
             ) : null}
           </ScrollView>
           <View className="absolute bottom-0 w-full p-7">
-            <Animated.View entering={FadeInUp.duration(2000)}>
-              <Button className="rounded-xl">
+            <Animated.View entering={FadeInDown.duration(2000)}>
+              <Button
+                className="rounded-xl"
+                onPress={() => {
+                  router.push(`/reservation/${branch?.id}`);
+                }}>
                 <Text>Randevu Al</Text>
               </Button>
             </Animated.View>

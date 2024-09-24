@@ -21,7 +21,7 @@ export const getSectorItem = (sector: string) => {
       ),
       value: 'Konaklama',
       title: 'Dairelerim',
-      singular: 'daire',
+      singular: 'daire / oda',
       placeholder: 'Kat: 6, D.No: 3',
       service: 'Oda Temizliği',
     },

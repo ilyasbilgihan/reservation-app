@@ -64,12 +64,12 @@ const BranchDetail = () => {
           <ScrollView>
             {branch ? (
               <View className="pb-24">
-                <Animated.View entering={FadeInUp.duration(1000)} className="w-screen p-3.5">
+                <Animated.View entering={FadeInUp.duration(500)} className="w-screen p-3.5">
                   <ImageBackground
                     source={{ uri: branch?.thumbnail }}
                     style={{ aspectRatio: 1 }}
                     className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
-                    <Animated.View entering={FadeInDown.duration(1000)}>
+                    <Animated.View entering={FadeInDown.duration(500)}>
                       {is_open ? (
                         <Text
                           style={{ lineHeight: 16 }}
@@ -86,7 +86,7 @@ const BranchDetail = () => {
                     </Animated.View>
                     <View>
                       <Animated.View
-                        entering={FadeInDown.duration(1000)}
+                        entering={FadeInDown.duration(500)}
                         style={{ borderRadius: 10 }}
                         className="w-full gap-2 bg-white p-4">
                         <View className="flex-row items-center justify-between">
@@ -117,7 +117,7 @@ const BranchDetail = () => {
                   {branch?.branch_image.length > 0 ? (
                     <View className="gap-3.5">
                       <Animated.Text
-                        entering={FadeInUp.duration(1000)}
+                        entering={FadeInUp.duration(500)}
                         className="font-qs-semibold text-2xl">
                         İşletmemizden görseller
                       </Animated.Text>
@@ -149,11 +149,11 @@ const BranchDetail = () => {
                       </TouchableOpacity>
                     </View>
                   ) : null}
-                  <Animated.View entering={FadeInUp.duration(1000)} className="gap-3.5">
+                  <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
                     <Text className="font-qs-semibold text-2xl">Biz kimiz?</Text>
                     <Text className="m-0 p-0">{branch.details}</Text>
                   </Animated.View>
-                  <Animated.View entering={FadeInUp.duration(1000)} className="gap-3.5">
+                  <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
                     <Text className="bg-background font-qs-semibold text-2xl">
                       Çalışma Saatlerimiz
                     </Text>
@@ -183,7 +183,7 @@ const BranchDetail = () => {
                       })}
                     </View>
                   </Animated.View>
-                  <Animated.View entering={FadeInUp.duration(1000)} className="gap-3.5">
+                  <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
                     <Text className="font-qs-semibold text-2xl">Neredeyiz?</Text>
                     <View className="aspect-video w-full overflow-hidden rounded-xl">
                       <MapView

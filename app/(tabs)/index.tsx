@@ -95,7 +95,7 @@ export default function Home() {
       <ScrollView>
         <View className="mx-7 flex-row items-center justify-between pt-7">
           <Animated.View
-            entering={FadeInLeft.duration(1000)}
+            entering={FadeInLeft.duration(500)}
             className="flex-1 flex-row items-center gap-2 pr-2">
             <Image
               source={profile?.avatar ? { uri: profile?.avatar } : require('~/assets/no-image.png')}
@@ -114,7 +114,7 @@ export default function Home() {
               setLocation(location);
             }}>
             <Animated.View
-              entering={FadeInRight.duration(1000)}
+              entering={FadeInRight.duration(500)}
               className="h-12 flex-row items-center gap-2 rounded-xl border border-input bg-background px-4">
               <Iconify icon="solar:map-point-bold-duotone" size={24} className="text-primary" />
               {location?.label ? (
@@ -123,7 +123,7 @@ export default function Home() {
             </Animated.View>
           </LocationPicker>
         </View>
-        <Animated.View entering={FadeInUp.duration(1000)}>
+        <Animated.View entering={FadeInUp.duration(500)}>
           <Text className="px-7 pb-3.5 pt-14 font-qs-medium text-4xl leading-3">
             Hangi <Text className="bg-violet-200 font-qs-semibold text-4xl">sektörde</Text>{' '}
             <Text className="bg-amber-200 font-qs-semibold text-4xl">rezervasyona</Text> ihtiyacın
@@ -131,7 +131,7 @@ export default function Home() {
           </Text>
         </Animated.View>
         <Animated.FlatList
-          entering={FadeInDown.duration(1000)}
+          entering={FadeInDown.duration(500)}
           data={SECTORS}
           contentContainerStyle={{
             paddingHorizontal: 24,

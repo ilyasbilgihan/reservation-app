@@ -13,7 +13,7 @@ const ListBranches = ({ branches }: any) => {
       {branches?.length > 0 ? (
         <View className="gap-7 p-7">
           <Animated.Text
-            entering={FadeInRight.delay(0).duration(1000)}
+            entering={FadeInRight.delay(0).duration(500)}
             className="font-qs-medium text-2xl">
             Bu sektördeki sana en yakın işletmeler
           </Animated.Text>
@@ -40,7 +40,7 @@ const ListBranches = ({ branches }: any) => {
                   });
                 }}>
                 <Animated.View
-                  entering={FadeInRight.delay(index * 250).duration(1000)}
+                  entering={FadeInRight.delay(index * 250).duration(500)}
                   style={{
                     shadowColor: 'rgba(20,20,20,0.20)',
                     elevation: 20,
@@ -111,7 +111,7 @@ const ListBranches = ({ branches }: any) => {
       ) : (
         <Animated.View
           exiting={FadeOut.duration(500)}
-          entering={FadeIn.delay(0).duration(1000)}
+          entering={FadeIn.delay(0).duration(500)}
           className="items-center gap-4 p-12">
           <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
           <Text className="text-center text-muted-foreground">

@@ -10,6 +10,7 @@ import { Text } from '../ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 import { Service } from '~/app/(other)/reservation/[id]';
 import { generateTimeList } from '~/utils/reservation';
+import { getSectorItem } from '~/utils/getLabels';
 
 type ReservedTime =
   | {
@@ -89,8 +90,8 @@ const SecondStep = ({
           exiting={FadeOutLeft.duration(500)}
           className="flex-1 flex-row items-center gap-3.5 pr-3.5">
           <Iconify icon="solar:arrow-left-linear" size={24} color={'black'} className="" />
-          <Text numberOfLines={1} className="flex-1 font-qs-semibold text-lg leading-6">
-            Personel & Hizmet Seçimi
+          <Text numberOfLines={1} className="flex-1 font-qs-semibold text-lg capitalize leading-6">
+            {getSectorItem(branch?.sector)?.singular} & Hizmet Seçimi
           </Text>
         </Animated.View>
         <Animated.Text
@@ -114,7 +115,7 @@ const SecondStep = ({
                 entering={FadeInLeft.duration(500)}
                 exiting={FadeOutLeft.duration(500)}>
                 <View className="py-7">
-                  <Calendar
+                  <Calendar.List
                     theme={calendarTheme}
                     calendarDisabledDateIds={disabledDays}
                     calendarActiveDateRanges={calendarActiveDateRanges}
@@ -145,7 +146,10 @@ const SecondStep = ({
                     }}
                     calendarFormatLocale="tr"
                     calendarFirstDayOfWeek="monday"
-                    calendarMonthId={toDateId(new Date())}
+                    calendarInitialMonthId={toDateId(new Date())}
+                    calendarMaxDateId={toDateId(
+                      new Date(new Date().setMonth(new Date().getMonth() + 1))
+                    )}
                     calendarDayHeight={44}
                   />
                 </View>

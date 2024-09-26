@@ -12,12 +12,20 @@ const icons = {
   index: (props: any) => <Iconify icon="solar:compass-line-duotone" size={24} {...props} />,
   branch: (props: any) => <Iconify icon="solar:shop-line-duotone" size={24} {...props} />,
   profile: (props: any) => <Iconify icon="solar:user-line-duotone" size={24} {...props} />,
+  'my-reservations': (props: any) => <Iconify icon="solar:calendar-linear" size={24} {...props} />,
+  'branch-reservations': (props: any) => (
+    <Iconify icon="solar:calendar-linear" size={24} {...props} />
+  ),
 };
 
 const icons_focused = {
   index: (props: any) => <Iconify icon="solar:compass-bold-duotone" size={24} {...props} />,
   branch: (props: any) => <Iconify icon="solar:shop-bold-duotone" size={24} {...props} />,
   profile: (props: any) => <Iconify icon="solar:user-bold-duotone" size={24} {...props} />,
+  'my-reservations': (props: any) => <Iconify icon="solar:calendar-bold" size={24} {...props} />,
+  'branch-reservations': (props: any) => (
+    <Iconify icon="solar:calendar-bold" size={24} {...props} />
+  ),
 };
 
 const TabBarButton = (props: any) => {
@@ -49,7 +57,7 @@ const TabBarButton = (props: any) => {
       opacity,
     };
   });
-  return (
+  return label ? (
     <Pressable {...props} className="flex-1 items-center justify-center gap-1">
       <Animated.View style={[animatedIconStyle, { transformOrigin: 'top center', top: 0 }]}>
         {
@@ -69,6 +77,24 @@ const TabBarButton = (props: any) => {
         ]}>
         {label}
       </Animated.Text>
+    </Pressable>
+  ) : (
+    <Pressable
+      {...props}
+      style={{
+        borderRadius: 28,
+        shadowColor: 'rgba(76, 29, 149,0.75)',
+        elevation: 8,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 4.65,
+      }}
+      className="-top-6 aspect-square items-center justify-center gap-1 bg-primary">
+      {isFocused
+        ? icons_focused[routeName as keyof typeof icons_focused]({
+            className: 'text-violet-100',
+            size: 30,
+          })
+        : icons[routeName as keyof typeof icons]({ className: 'text-violet-200', size: 30 })}
     </Pressable>
   );
 };

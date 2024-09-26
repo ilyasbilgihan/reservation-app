@@ -37,6 +37,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="my-reservations"
+        options={{
+          headerShown: false,
+          tabBarButton: branch ? () => <></> : undefined,
+        }}
+      />
+      <Tabs.Screen
+        name="branch-reservations"
+        options={{
+          headerShown: false,
+          tabBarButton: branch ? undefined : () => <></>,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profil',

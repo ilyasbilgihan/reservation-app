@@ -8,12 +8,7 @@ const TabBar = ({ state, descriptors, navigation }: any) => {
       className="absolute bottom-0 w-full flex-row rounded-3xl border-violet-50 bg-background">
       {state.routes.map((route: any, index: any) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
+        const label = options.title;
 
         if (options.tabBarButton) return null;
         if (['_sitemap', '+not-found'].includes(route.name)) return null;

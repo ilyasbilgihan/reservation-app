@@ -1,58 +1,112 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
-import { Text } from '~/components/ui/text';
+import { useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Swiper from 'react-native-deck-swiper';
+
+import { supabase } from '~/utils/supabase';
+import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { Iconify } from '~/lib/icons/Iconify';
+import { Text } from '~/components/ui/text';
+import { ScrollView } from 'react-native-gesture-handler';
+import ReservationList from '~/components/ReservationList';
 
 const MyReservation = () => {
+  const { session } = useGlobalContext();
+  const [reservations, setReservations] = useState<any>([]);
+  const [reservationServices, setReservationServices] = useState<any>([]);
+  const [reservationDates, setReservationDates] = useState<any>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      //fetchReservations();
+      fetchReservationServices();
+      fetchReservationDate();
+    }, [])
+  );
+
+  const fetchReservations = async () => {
+    const { data, error } = await supabase
+      .from('reservation')
+      .select('*, asset(*), branch(name)')
+      .eq('customer_id', session?.user.id);
+    if (error) {
+      console.log('error', error);
+    } else {
+      setReservations(data);
+    }
+  };
+
+  const fetchReservationServices = async () => {
+    const { data, error } = await supabase
+      .from('reservation_service')
+      .select('*, reservation(customer_id), service(*)')
+      .eq('reservation.customer_id', session?.user.id);
+    if (error) {
+      console.log('error', error);
+    } else {
+      setReservationServices(data);
+    }
+  };
+
+  const fetchReservationDate = async () => {
+    const { data, error } = await supabase
+      .from('reservation_date')
+      .select('*, reservation(*, asset(*), branch(name))')
+      .eq('reservation.customer_id', session?.user.id)
+      .order('date', { ascending: false });
+
+    if (error) {
+      console.log('error', error);
+    } else {
+      setReservationDates(data);
+      let tmp = data?.map((item: any) => item.reservation);
+      let tmp2 = tmp.filter((obj1, i, arr) => arr.findIndex((obj2) => obj2.id === obj1.id) === i);
+      setReservations(tmp2);
+    }
+  };
+
+  const pendingReservations = reservations?.filter((item: any) => item.status === 'pending');
+  const approvedReservations = reservations?.filter((item: any) => item.status === 'approved');
+  const doneReservations = reservations?.filter((item: any) => item.status === 'done');
+  const rejectedReservations = reservations?.filter((item: any) => item.status === 'rejected');
+
   return (
     <SafeAreaView>
-      <View className="px-7">
-        <View className="w-full flex-row">
-          <View style={{ width: 56 }}>
-            <View className="w-full">
-              <View className="h-7 w-9 items-center">
-                <Text className="font-qs-semibold text-sm text-primary">APR</Text>
-              </View>
-              <View className="w-full flex-row">
-                <View className="aspect-square w-9 items-center justify-center rounded-full bg-primary">
-                  <Text className="leading-5 text-violet-100">22</Text>
-                </View>
-                <View className="flex-1 justify-center px-2">
-                  <View className="h-0.5 w-full bg-primary"></View>
-                </View>
-              </View>
-            </View>
-            <View className="w-9 flex-1 items-center pt-2">
-              <View className="h-full w-1 rounded-md bg-primary"></View>
-            </View>
-          </View>
-          <View
-            style={{
-              shadowColor: 'rgba(20,20,20,0.20)',
-              elevation: 20,
-              shadowOffset: { width: 0, height: 10 },
-              shadowRadius: 13.16,
-            }}
-            className="mt-7 flex-1 rounded-xl border border-input bg-white px-3.5 pb-3.5">
-            <View className="h-9 flex-row items-center justify-between">
-              <Text className="font-qs-bold">10:00 - 10:30</Text>
-              <Text className="font-qs-semibold text-slate-400">#RSV1</Text>
-            </View>
-            <View className="gap-2 pt-2">
-              <Text className="font-qs-semibold text-xl">Ayşe Yıldız</Text>
-              <Text className=" text-slate-600">Saç Kesimi</Text>
-              <View className="flex-row items-center gap-2">
-                <Iconify icon="solar:shop-line-duotone" size={20} className="text-slate-500" />
-                <Text className="font-qs-semibold leading-5 text-slate-500">
-                  Victory Güzellik Salonu
-                </Text>
-              </View>
-            </View>
-          </View>
+      <ScrollView>
+        <View className="px-7 pt-7">
+          <Text className="font-qs-bold text-3xl  text-slate-700">Rezervasyonlarım</Text>
+          <ReservationList
+            reservations={pendingReservations}
+            reservationServices={reservationServices}
+            reservationDates={reservationDates}
+            title="Onay Bekleyen"
+            color="rgb(71 85 105)"
+          />
+          <ReservationList
+            reservations={approvedReservations}
+            reservationServices={reservationServices}
+            reservationDates={reservationDates}
+            title="Onaylanan"
+            color="hsl(260 51% 41%)"
+          />
+          <ReservationList
+            reservations={doneReservations}
+            reservationServices={reservationServices}
+            reservationDates={reservationDates}
+            title="Tamamlanmış"
+            color="rgb(13 148 136)"
+          />
+          <ReservationList
+            reservations={rejectedReservations}
+            reservationServices={reservationServices}
+            reservationDates={reservationDates}
+            title="Reddedilmiş"
+            color="hsl(13 81% 43%)"
+          />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

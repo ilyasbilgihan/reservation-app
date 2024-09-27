@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import * as Location from 'expo-location';
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
@@ -98,6 +98,7 @@ const LocationPicker = ({ children, onLocationSelect, hideLabelInput, defaultReg
               {location ? (
                 <MapView
                   showsCompass
+                  provider={PROVIDER_GOOGLE}
                   showsUserLocation
                   initialRegion={centerPosition}
                   onRegionChangeComplete={(region) => setCenterPosition(region)}

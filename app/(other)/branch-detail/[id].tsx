@@ -11,7 +11,7 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { ImageGallery } from '@georstat/react-native-image-gallery';
 import { Button } from '~/components/ui/button';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import MapView, { MapMarker } from 'react-native-maps';
+import MapView, { MapMarker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { getDayLabel } from '~/utils/getLabels';
 
 const BranchDetail = () => {
@@ -221,6 +221,7 @@ const BranchDetail = () => {
                     <View className="aspect-video w-full overflow-hidden rounded-xl">
                       <MapView
                         showsCompass
+                        provider={PROVIDER_GOOGLE}
                         showsUserLocation
                         initialRegion={{
                           longitude: branch.long,

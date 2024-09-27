@@ -55,7 +55,7 @@ const MyReservation = () => {
       .from('reservation_date')
       .select('*, reservation(*, asset(*), branch(name))')
       .eq('reservation.customer_id', session?.user.id)
-      .order('date', { ascending: false });
+      .order('date', { ascending: true });
 
     if (error) {
       console.log('error', error);
@@ -63,7 +63,7 @@ const MyReservation = () => {
       setReservationDates(data);
       let tmp = data?.map((item: any) => item.reservation);
       let tmp2 = tmp.filter((obj1, i, arr) => arr.findIndex((obj2) => obj2.id === obj1.id) === i);
-      setReservations(tmp2);
+      setReservations(tmp2.reverse());
     }
   };
 
@@ -105,6 +105,7 @@ const MyReservation = () => {
             title="Reddedilmiş"
             color="hsl(13 81% 43%)"
           />
+          <View className="relative z-50 h-7"></View>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,9 +1,20 @@
-import { View, Text, LayoutChangeEvent } from 'react-native';
+import { View, LayoutChangeEvent } from 'react-native';
 import React, { useState } from 'react';
 import { Iconify } from '~/lib/icons/Iconify';
 import Swiper from 'react-native-deck-swiper';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeInUp,
+  FadeOut,
+  FadeOutDown,
+  FadeOutUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { Text } from './ui/text';
 
 const ReservationList = ({
   reservations,
@@ -14,36 +25,18 @@ const ReservationList = ({
 }: any) => {
   const [expanded, setExpanded] = useState(false);
 
-  const [height, setHeight] = useState(0);
-  const animatedHeight = useSharedValue(0);
-
-  const onLayout = (event: LayoutChangeEvent) => {
-    const onLayoutHeight = event.nativeEvent.layout.height;
-
-    if (onLayoutHeight > 0 && height !== onLayoutHeight) {
-      setHeight(onLayoutHeight);
-    }
-  };
-
-  const collapsableStyle = useAnimatedStyle(() => {
-    animatedHeight.value = expanded ? withTiming(height) : withTiming(0);
-
-    return {
-      height: animatedHeight.value,
-    };
-  }, [expanded, height]);
-
   return reservations.length > 0 ? (
     <>
-      <View className="relative z-50 flex-row items-center gap-3.5 pb-3.5 pt-7">
-        <View style={{ backgroundColor: color }} className="h-2.5 w-2.5 rounded-full"></View>
-        <Text className="font-qs-semibold text-xl leading-6">
-          {title} ({reservations?.length})
-        </Text>
-        <View
-          style={[{ height: 1, borderWidth: 1, borderStyle: 'dashed' }]}
-          className="top-px flex-1 border-input"></View>
-        <TouchableOpacity activeOpacity={0.75} onPress={() => setExpanded(!expanded)}>
+      <TouchableOpacity activeOpacity={0.75} onPress={() => setExpanded(!expanded)}>
+        <View className="relative z-50 flex-row items-center gap-3.5 pb-3.5 pt-7">
+          <View style={{ backgroundColor: color }} className="h-2.5 w-2.5 rounded-full"></View>
+          <Text className="font-qs-semibold text-xl leading-6">
+            {title} ({reservations?.length})
+          </Text>
+          <View
+            style={[{ height: 1, borderWidth: 1, borderStyle: 'dashed' }]}
+            className="top-px flex-1 border-input"></View>
+
           <View className="h-8 w-8 items-center justify-center rounded-full border border-input bg-background">
             {expanded ? (
               <Iconify icon="pajamas:chevron-up" size={22} className=" text-slate-500" />
@@ -51,10 +44,10 @@ const ReservationList = ({
               <Iconify icon="pajamas:chevron-down" size={22} className=" text-slate-500" />
             )}
           </View>
-        </TouchableOpacity>
-      </View>
-      <Animated.View style={[collapsableStyle, { overflow: 'hidden' }]}>
-        <View onLayout={onLayout}>
+        </View>
+      </TouchableOpacity>
+      {expanded ? (
+        <>
           {reservations.map((item: any) => {
             const services = reservationServices?.filter(
               (service: any) => service.reservation_id === item.id
@@ -65,7 +58,7 @@ const ReservationList = ({
               .sort((a: any, b: any) => a.localeCompare(b));
 
             let additional = (services?.length - 1) * 8;
-            let totalHeight = 178 + (additional < 0 ? 0 : additional);
+            let totalHeight = 150 + (additional < 0 ? 0 : additional);
             return (
               <View className="w-full flex-row " key={item.id}>
                 <View style={{ width: 48 }}>
@@ -74,7 +67,7 @@ const ReservationList = ({
                       <View className="w-full">
                         <View className="h-6 w-9 items-center">
                           <Text style={{ color }} className="font-qs-bold text-sm uppercase">
-                            {new Date(dates.at(0)?.date).toLocaleDateString('tr', {
+                            {new Date(dates.at(-1)?.date).toLocaleDateString('tr', {
                               month: 'short',
                             })}
                           </Text>
@@ -84,7 +77,7 @@ const ReservationList = ({
                             style={{ backgroundColor: color }}
                             className="aspect-square w-9 items-center justify-center rounded-full">
                             <Text className="font-qs-semibold leading-5 text-gray-100">
-                              {new Date(dates.at(0)?.date).toLocaleDateString('tr', {
+                              {new Date(dates.at(-1)?.date).toLocaleDateString('tr', {
                                 day: '2-digit',
                               })}
                             </Text>
@@ -96,7 +89,7 @@ const ReservationList = ({
                           </View>
                         </View>
                       </View>
-                      <View className="h-5 w-9 items-center pb-0.5 pt-1">
+                      <View className="h-5 w-9 items-center pt-1">
                         <View
                           style={[
                             {
@@ -113,7 +106,7 @@ const ReservationList = ({
                   <View className="w-full">
                     <View className="h-6 w-9 items-center">
                       <Text style={{ color }} className="font-qs-bold text-sm uppercase">
-                        {new Date(dates.at(-1)?.date).toLocaleDateString('tr', {
+                        {new Date(dates.at(0)?.date).toLocaleDateString('tr', {
                           month: 'short',
                         })}
                       </Text>
@@ -123,7 +116,7 @@ const ReservationList = ({
                         style={{ backgroundColor: color }}
                         className="aspect-square w-9 items-center justify-center rounded-full">
                         <Text className="font-qs-semibold leading-5 text-gray-100">
-                          {new Date(dates.at(-1)?.date).toLocaleDateString('tr', {
+                          {new Date(dates.at(0)?.date).toLocaleDateString('tr', {
                             day: '2-digit',
                           })}
                         </Text>
@@ -145,7 +138,7 @@ const ReservationList = ({
                   <View className="relative z-50 h-6"></View>
                   <View style={{ height: totalHeight }}>
                     {services.length > 1 ? (
-                      <View style={{ marginLeft: -48 }} className="relative flex-1 ">
+                      <View style={{ marginLeft: -48 }} className="relative flex-1">
                         <Swiper
                           cards={services}
                           renderCard={(card: any, index) => {
@@ -158,7 +151,7 @@ const ReservationList = ({
                                   shadowOffset: { width: 0, height: 10 },
                                   shadowRadius: 13.16,
                                 }}
-                                className="w-full rounded-xl border border-input bg-white px-3.5 pb-3.5">
+                                className=" w-full rounded-xl border border-input bg-white px-3.5 pb-3.5">
                                 <View className="h-9 flex-row items-center justify-between">
                                   <Text className="font-qs-semibold text-xl">
                                     {item?.asset?.name}
@@ -222,15 +215,15 @@ const ReservationList = ({
                             shadowOffset: { width: 0, height: 10 },
                             shadowRadius: 13.16,
                           }}
-                          className="w-full rounded-xl border border-input bg-white px-3.5 pb-3.5">
+                          className="w-full flex-1 rounded-xl border border-input bg-white px-3.5 pb-3.5">
                           <View className="flex-row items-center justify-between py-1">
                             <Text className="font-qs-semibold text-xl">{item?.asset?.name}</Text>
                             <Text className="font-qs-semibold text-slate-400">#RSV{item.id}</Text>
                           </View>
-                          <View className="gap-2 pt-2">
+                          <View className="flex-1 gap-2 pt-2">
                             {/* <Text className="font-qs-semibold">
-                                  {card?.service?.name}
-                                </Text> */}
+                                    {card?.service?.name}
+                                  </Text> */}
                             <View className="flex-row items-center gap-2">
                               <Iconify
                                 icon="solar:clock-circle-line-duotone"
@@ -243,7 +236,7 @@ const ReservationList = ({
                                 <Text className="text-slate-600">Gün boyu</Text>
                               )}
                             </View>
-                            <View className="flex-row items-center gap-2">
+                            <View className="mt-auto flex-row items-center gap-2">
                               <Iconify
                                 icon="solar:shop-line-duotone"
                                 size={20}
@@ -257,6 +250,7 @@ const ReservationList = ({
                             </View>
                           </View>
                         </View>
+                        <View className="h-6"></View>
                       </View>
                     )}
                   </View>
@@ -264,8 +258,8 @@ const ReservationList = ({
               </View>
             );
           })}
-        </View>
-      </Animated.View>
+        </>
+      ) : null}
     </>
   ) : null;
 };

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
 
 import { supabase } from '~/utils/supabase';
@@ -11,6 +11,7 @@ import { Iconify } from '~/lib/icons/Iconify';
 import { Text } from '~/components/ui/text';
 import { ScrollView } from 'react-native-gesture-handler';
 import ReservationList from '~/components/ReservationList';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 
 const MyReservation = () => {
   const { session } = useGlobalContext();
@@ -20,23 +21,10 @@ const MyReservation = () => {
 
   useFocusEffect(
     useCallback(() => {
-      //fetchReservations();
       fetchReservationServices();
       fetchReservationDate();
     }, [])
   );
-
-  const fetchReservations = async () => {
-    const { data, error } = await supabase
-      .from('reservation')
-      .select('*, asset(*), branch(name)')
-      .eq('customer_id', session?.user.id);
-    if (error) {
-      console.log('error', error);
-    } else {
-      setReservations(data);
-    }
-  };
 
   const fetchReservationServices = async () => {
     const { data, error } = await supabase
@@ -53,7 +41,7 @@ const MyReservation = () => {
   const fetchReservationDate = async () => {
     const { data, error } = await supabase
       .from('reservation_date')
-      .select('*, reservation(*, asset(*), branch(name))')
+      .select('*, reservation(*, asset(*), branch(name, reservation_period))')
       .eq('reservation.customer_id', session?.user.id)
       .order('date', { ascending: true });
 
@@ -62,25 +50,53 @@ const MyReservation = () => {
     } else {
       setReservationDates(data);
       let tmp = data?.map((item: any) => item.reservation);
-      let tmp2 = tmp.filter((obj1, i, arr) => arr.findIndex((obj2) => obj2.id === obj1.id) === i);
+      let tmp2 = tmp.filter((obj1, i, arr) => arr.findIndex((obj2) => obj2?.id === obj1?.id) === i);
       setReservations(tmp2.reverse());
     }
   };
 
-  const pendingReservations = reservations?.filter((item: any) => item.status === 'pending');
-  const approvedReservations = reservations?.filter((item: any) => item.status === 'approved');
-  const doneReservations = reservations?.filter((item: any) => item.status === 'done');
-  const rejectedReservations = reservations?.filter((item: any) => item.status === 'rejected');
+  const pendingReservations = reservations?.filter((item: any) => item?.status === 'pending');
+  const approvedReservations = reservations?.filter((item: any) => item?.status === 'approved');
+  const doneReservations = reservations?.filter((item: any) => item?.status === 'done');
+  const rejectedReservations = reservations?.filter((item: any) => item?.status === 'rejected');
+
+  const insets = useSafeAreaInsets();
+  const contentInsets = {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: 28,
+    right: 28,
+  };
 
   return (
     <SafeAreaView>
       <ScrollView>
-        <View className="px-7 pt-7">
-          <Text className="font-qs-bold text-3xl  text-slate-700">Rezervasyonlarım</Text>
+        <View className="p-7">
+          <View className="flex-row items-center gap-3.5">
+            <Text className="font-qs-bold text-3xl  text-slate-700">Rezervasyonlarım</Text>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Pressable>
+                  <Iconify
+                    icon="solar:question-circle-bold"
+                    size={24}
+                    className=" text-slate-400"
+                  />
+                </Pressable>
+              </TooltipTrigger>
+              <TooltipContent insets={contentInsets}>
+                <Text className="text-sm text-slate-700">
+                  Tamamlanmamış rezervasyonunuzu iptal etmek için üzerine basılı tutunuz.
+                </Text>
+              </TooltipContent>
+            </Tooltip>
+          </View>
           <ReservationList
             reservations={pendingReservations}
             reservationServices={reservationServices}
             reservationDates={reservationDates}
+            fetchReservationDates={fetchReservationDate}
+            longPressEvent
             title="Onay Bekleyen"
             color="rgb(71 85 105)"
           />
@@ -88,6 +104,8 @@ const MyReservation = () => {
             reservations={approvedReservations}
             reservationServices={reservationServices}
             reservationDates={reservationDates}
+            fetchReservationDates={fetchReservationDate}
+            longPressEvent
             title="Onaylanan"
             color="hsl(260 51% 41%)"
           />
@@ -95,6 +113,7 @@ const MyReservation = () => {
             reservations={doneReservations}
             reservationServices={reservationServices}
             reservationDates={reservationDates}
+            fetchReservationDates={fetchReservationDate}
             title="Tamamlanmış"
             color="rgb(13 148 136)"
           />
@@ -102,10 +121,10 @@ const MyReservation = () => {
             reservations={rejectedReservations}
             reservationServices={reservationServices}
             reservationDates={reservationDates}
+            fetchReservationDates={fetchReservationDate}
             title="Reddedilmiş"
             color="hsl(13 81% 43%)"
           />
-          <View className="relative z-50 h-7"></View>
         </View>
       </ScrollView>
     </SafeAreaView>

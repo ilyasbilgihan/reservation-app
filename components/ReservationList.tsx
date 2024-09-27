@@ -1,34 +1,56 @@
-import { View, LayoutChangeEvent } from 'react-native';
+import { View } from 'react-native';
 import React, { useState } from 'react';
 import { Iconify } from '~/lib/icons/Iconify';
-import Swiper from 'react-native-deck-swiper';
-import Animated, {
-  FadeIn,
-  FadeInUp,
-  FadeOut,
-  FadeOutDown,
-  FadeOutUp,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Text } from './ui/text';
+import ReservationCard from './ReservationCard';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+} from '~/components/ui/dialog';
+import { Button } from './ui/button';
+import { supabase } from '~/utils/supabase';
 
 const ReservationList = ({
   reservations,
   reservationServices,
   reservationDates,
+  fetchReservationDates,
+  longPressEvent = false,
   title,
   color,
 }: any) => {
   const [expanded, setExpanded] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
+
+  const handleLongPress = (item: any) => {
+    setSelected(item);
+  };
+
+  const handleCancelReservation = async (id: any) => {
+    const { error } = await supabase
+      .from('reservation')
+      .update({ status: 'rejected' })
+      .eq('id', id);
+    if (error) {
+      console.log('error', error);
+    } else {
+      fetchReservationDates();
+      setSelected(null);
+    }
+  };
 
   return reservations.length > 0 ? (
     <>
       <TouchableOpacity activeOpacity={0.75} onPress={() => setExpanded(!expanded)}>
-        <View className="relative z-50 flex-row items-center gap-3.5 pb-3.5 pt-7">
+        <View className="flex-row items-center gap-3.5 pb-3.5 pt-7">
           <View style={{ backgroundColor: color }} className="h-2.5 w-2.5 rounded-full"></View>
           <Text className="font-qs-semibold text-xl leading-6">
             {title} ({reservations?.length})
@@ -49,18 +71,13 @@ const ReservationList = ({
       {expanded ? (
         <>
           {reservations.map((item: any) => {
-            const services = reservationServices?.filter(
-              (service: any) => service.reservation_id === item.id
-            );
-            const dates = reservationDates?.filter((date: any) => date.reservation_id === item.id);
+            const dates = reservationDates?.filter((date: any) => date.reservation_id === item?.id);
             let times = dates
               .map((date: any) => date.time?.slice(0, 5))
               .sort((a: any, b: any) => a.localeCompare(b));
 
-            let additional = (services?.length - 1) * 8;
-            let totalHeight = 150 + (additional < 0 ? 0 : additional);
             return (
-              <View className="w-full flex-row " key={item.id}>
+              <View className="w-full flex-row " key={item?.id}>
                 <View style={{ width: 48 }}>
                   {times[0] == null ? (
                     <>
@@ -89,7 +106,7 @@ const ReservationList = ({
                           </View>
                         </View>
                       </View>
-                      <View className="h-5 w-9 items-center pt-1">
+                      <View className="top-0.5 h-4 w-9 items-center pt-0.5">
                         <View
                           style={[
                             {
@@ -135,131 +152,59 @@ const ReservationList = ({
                   </View>
                 </View>
                 <View className="flex-1">
-                  <View className="relative z-50 h-6"></View>
-                  <View style={{ height: totalHeight }}>
-                    {services.length > 1 ? (
-                      <View style={{ marginLeft: -48 }} className="relative flex-1">
-                        <Swiper
-                          cards={services}
-                          renderCard={(card: any, index) => {
-                            return (
-                              <View
-                                key={card?.id}
-                                style={{
-                                  shadowColor: `rgba(20,20,20,${0.2 / services?.length})`, // handle stack shadow opacity
-                                  elevation: 20,
-                                  shadowOffset: { width: 0, height: 10 },
-                                  shadowRadius: 13.16,
-                                }}
-                                className=" w-full rounded-xl border border-input bg-white px-3.5 pb-3.5">
-                                <View className="h-9 flex-row items-center justify-between">
-                                  <Text className="font-qs-semibold text-xl">
-                                    {item?.asset?.name}
-                                  </Text>
-                                  <Text className="font-qs-semibold text-slate-400">
-                                    #RSV{item.id}-{card?.service_id}
-                                  </Text>
-                                </View>
-                                <View className="gap-2 pt-2">
-                                  <Text className="font-qs-semibold">{card?.service?.name}</Text>
-                                  <View className="flex-row items-center gap-2">
-                                    <Iconify
-                                      icon="solar:clock-circle-line-duotone"
-                                      size={20}
-                                      className="text-slate-500"
-                                    />
-                                    {times[0] != null ? (
-                                      <Text className="text-slate-600">{times.join(', ')}</Text>
-                                    ) : (
-                                      <Text className="text-slate-600">Gün boyu</Text>
-                                    )}
-                                  </View>
-                                  <View className="flex-row items-center gap-2">
-                                    <Iconify
-                                      icon="solar:shop-line-duotone"
-                                      size={20}
-                                      className="text-slate-500"
-                                    />
-                                    <Text
-                                      numberOfLines={1}
-                                      className="font-qs-semibold leading-5 text-slate-500">
-                                      {item?.branch?.name}
-                                    </Text>
-                                  </View>
-                                </View>
-                              </View>
-                            );
-                          }}
-                          infinite
-                          onSwiped={(cardIndex) => {
-                            /* console.log(cardIndex); */
-                          }}
-                          cardHorizontalMargin={48}
-                          cardVerticalMargin={0}
-                          verticalThreshold={48}
-                          horizontalThreshold={48}
-                          cardIndex={0}
-                          backgroundColor={'transparent'}
-                          stackSeparation={0}
-                          stackSize={services.length}
-                          disableBottomSwipe
-                          disableTopSwipe
-                        />
-                      </View>
-                    ) : (
-                      <View className="relative z-50 flex-1">
-                        <View
-                          style={{
-                            shadowColor: `rgba(20,20,20,${0.2})`, // handle stack shadow opacity
-                            elevation: 20,
-                            shadowOffset: { width: 0, height: 10 },
-                            shadowRadius: 13.16,
-                          }}
-                          className="w-full flex-1 rounded-xl border border-input bg-white px-3.5 pb-3.5">
-                          <View className="flex-row items-center justify-between py-1">
-                            <Text className="font-qs-semibold text-xl">{item?.asset?.name}</Text>
-                            <Text className="font-qs-semibold text-slate-400">#RSV{item.id}</Text>
-                          </View>
-                          <View className="flex-1 gap-2 pt-2">
-                            {/* <Text className="font-qs-semibold">
-                                    {card?.service?.name}
-                                  </Text> */}
-                            <View className="flex-row items-center gap-2">
-                              <Iconify
-                                icon="solar:clock-circle-line-duotone"
-                                size={20}
-                                className="text-slate-500"
-                              />
-                              {times[0] != null ? (
-                                <Text className="text-slate-600">{times.join(', ')}</Text>
-                              ) : (
-                                <Text className="text-slate-600">Gün boyu</Text>
-                              )}
-                            </View>
-                            <View className="mt-auto flex-row items-center gap-2">
-                              <Iconify
-                                icon="solar:shop-line-duotone"
-                                size={20}
-                                className="text-slate-500"
-                              />
-                              <Text
-                                numberOfLines={1}
-                                className="font-qs-semibold leading-5 text-slate-500">
-                                {item?.branch?.name}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View className="h-6"></View>
-                      </View>
-                    )}
-                  </View>
+                  {longPressEvent ? (
+                    <ReservationCard
+                      reservationServices={reservationServices}
+                      item={item}
+                      times={times}
+                      handleLongPress={handleLongPress}
+                    />
+                  ) : (
+                    <ReservationCard
+                      reservationServices={reservationServices}
+                      item={item}
+                      times={times}
+                    />
+                  )}
                 </View>
               </View>
             );
           })}
         </>
       ) : null}
+      <Dialog
+        open={selected !== null}
+        onOpenChange={(value) => {
+          if (!value) {
+            setSelected(null);
+          }
+        }}>
+        <DialogOverlay closeOnPress />
+        <DialogContent className="mx-7">
+          <DialogHeader>
+            <DialogTitle>İptal Etmeyi Onayla</DialogTitle>
+            <DialogDescription>
+              <Text className="font-qs-semibold">#RSV{selected?.id}</Text> kodlu rezervasyonu iptal
+              etmek istediğinize emin misiniz?
+            </DialogDescription>
+            <DialogDescription>
+              <Text>Bu işlem geri alınamaz.</Text>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row">
+            <DialogClose asChild className="flex-1">
+              <Button variant={'outline'}>
+                <Text>Vazgeç</Text>
+              </Button>
+            </DialogClose>
+            <DialogClose asChild className="flex-1">
+              <Button onPress={() => handleCancelReservation(selected?.id)}>
+                <Text>Onayla</Text>
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   ) : null;
 };

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Iconify } from '~/lib/icons/Iconify';
 
 export const getDayLabel = (day: string) => {
@@ -11,6 +10,14 @@ export const getDayLabel = (day: string) => {
     Saturday: 'Cumartesi',
     Sunday: 'Pazar',
   }[day];
+};
+
+export const getStatusLabel = (status: string) => {
+  return {
+    pending: 'Beklemede',
+    accepted: 'Onaylandı',
+    done: 'Tamamlandı',
+  }[status];
 };
 
 export const getSectorItem = (sector: string) => {

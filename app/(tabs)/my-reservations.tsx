@@ -2,14 +2,13 @@ import React, { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import Swiper from 'react-native-deck-swiper';
 
 import { supabase } from '~/utils/supabase';
 import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import { Text } from '~/components/ui/text';
-import { ScrollView } from 'react-native-gesture-handler';
+import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import ReservationList from '~/components/ReservationList';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 
@@ -29,7 +28,7 @@ const MyReservation = () => {
   const fetchReservationServices = async () => {
     const { data, error } = await supabase
       .from('reservation_service')
-      .select('*, reservation(customer_id), service(*)')
+      .select('*, reservation!inner(customer_id), service(*)')
       .eq('reservation.customer_id', session?.user.id);
     if (error) {
       console.log('error', error);
@@ -41,7 +40,7 @@ const MyReservation = () => {
   const fetchReservationDate = async () => {
     const { data, error } = await supabase
       .from('reservation_date')
-      .select('*, reservation(*, asset(*), branch(name, reservation_period))')
+      .select('*, reservation!inner(*, asset(*), branch(name, phone, reservation_period))')
       .eq('reservation.customer_id', session?.user.id)
       .order('date', { ascending: true });
 
@@ -58,7 +57,6 @@ const MyReservation = () => {
   const pendingReservations = reservations?.filter((item: any) => item?.status === 'pending');
   const approvedReservations = reservations?.filter((item: any) => item?.status === 'approved');
   const doneReservations = reservations?.filter((item: any) => item?.status === 'done');
-  const rejectedReservations = reservations?.filter((item: any) => item?.status === 'rejected');
 
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -68,9 +66,18 @@ const MyReservation = () => {
     right: 28,
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    fetchReservationServices();
+    fetchReservationDate();
+    setRefreshing(false);
+  }, []);
+
   return (
     <SafeAreaView>
-      <ScrollView>
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <View className="p-7">
           <View className="flex-row items-center gap-3.5">
             <Text className="font-qs-bold text-3xl  text-slate-700">Rezervasyonlarım</Text>
@@ -96,7 +103,6 @@ const MyReservation = () => {
             reservationServices={reservationServices}
             reservationDates={reservationDates}
             fetchReservationDates={fetchReservationDate}
-            longPressEvent
             title="Onay Bekleyen"
             color="rgb(71 85 105)"
           />
@@ -105,7 +111,6 @@ const MyReservation = () => {
             reservationServices={reservationServices}
             reservationDates={reservationDates}
             fetchReservationDates={fetchReservationDate}
-            longPressEvent
             title="Onaylanan"
             color="hsl(260 51% 41%)"
           />
@@ -116,14 +121,6 @@ const MyReservation = () => {
             fetchReservationDates={fetchReservationDate}
             title="Tamamlanmış"
             color="rgb(13 148 136)"
-          />
-          <ReservationList
-            reservations={rejectedReservations}
-            reservationServices={reservationServices}
-            reservationDates={reservationDates}
-            fetchReservationDates={fetchReservationDate}
-            title="Reddedilmiş"
-            color="hsl(13 81% 43%)"
           />
         </View>
       </ScrollView>

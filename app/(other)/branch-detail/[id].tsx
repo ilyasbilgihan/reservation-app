@@ -1,16 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { View, ImageBackground, ScrollView } from 'react-native';
+import { View, ImageBackground, ScrollView, Image } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeInLeft,
-  FadeInRight,
-  FadeInUp,
-  interpolate,
-  useSharedValue,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
@@ -40,8 +32,11 @@ const BranchDetail = () => {
   const fetchBranch = async () => {
     const { data, error } = await supabase
       .from('branch_with_location')
-      .select('*, working_hour(*), branch_image(*)')
+      .select(
+        '*, working_hour(*), branch_image(*), rating:reservation!id(rating.avg()), reservations:reservation!id(*, customer:profile!customer_id(*))'
+      )
       .eq('id', id)
+      .gte('reservations.rating', 0)
       .order('id', { ascending: true, referencedTable: 'working_hour' })
       .single();
     if (error) {
@@ -153,6 +148,44 @@ const BranchDetail = () => {
                     <Text className="font-qs-semibold text-2xl">Biz kimiz?</Text>
                     <Text className="m-0 p-0">{branch.details}</Text>
                   </Animated.View>
+                  {branch?.reservations?.length > 0 ? (
+                    <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
+                      <Text className="font-qs-semibold text-2xl">
+                        Müşteri Değerlendirmeleri ({branch?.reservations?.length})
+                      </Text>
+                      {branch?.reservations?.map((item: any) => (
+                        <View>
+                          <View className="flex-row items-center justify-between">
+                            <View className="flex-row items-center gap-3.5">
+                              <Image
+                                className="h-10 w-10 rounded-xl border border-input"
+                                source={
+                                  item?.customer?.avatar
+                                    ? { uri: item?.customer?.avatar }
+                                    : require('~/assets/no-image.png')
+                                }
+                              />
+                              <Text className="font-qs-semibold">
+                                {item?.customer?.full_name || 'Anonim'}
+                              </Text>
+                            </View>
+                            <View className="flex-row items-center gap-2">
+                              <Iconify
+                                icon="solar:star-bold"
+                                size={20}
+                                className="text-amber-400"
+                              />
+                              <Text className="font-qs-semibold text-slate-500">
+                                {item?.rating?.toFixed(1)}
+                              </Text>
+                            </View>
+                          </View>
+                          {item?.comment && <Text className="p-3.5">{item?.comment}</Text>}
+                        </View>
+                      ))}
+                    </Animated.View>
+                  ) : null}
+
                   <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
                     <Text className="bg-background font-qs-semibold text-2xl">
                       Çalışma Saatlerimiz

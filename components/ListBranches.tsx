@@ -59,7 +59,9 @@ const ListBranches = ({ branches }: any) => {
                     <View className="flex-row items-center">
                       <View className="flex-row items-center gap-1">
                         <Iconify icon="solar:star-bold" size={22} className="text-amber-400" />
-                        <Text className="font-qs-semibold">5.0</Text>
+                        <Text className="font-qs-semibold">
+                          {item?.rating[0]?.avg?.toFixed(1) || '-'}
+                        </Text>
                       </View>
                       {is_open ? (
                         <Text

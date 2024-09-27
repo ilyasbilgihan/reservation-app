@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { activeDateRangesEmitter, useDateRange } from '@marceloterreiro/flash-calendar';
+import { useDateRange } from '@marceloterreiro/flash-calendar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from '~/components/ui/text';
@@ -211,7 +211,7 @@ export default function Reservation() {
       if (err.length > 0) {
         await supabase.from('reservation').delete().eq('id', insertData[0].id);
       } else {
-        router.push(`/branch-detail/${branch?.id}`);
+        router.replace(`/branch-detail/${branch?.id}`);
       }
       setLoading(false);
     }

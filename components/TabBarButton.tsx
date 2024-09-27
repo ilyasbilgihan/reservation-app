@@ -14,7 +14,7 @@ const icons = {
   profile: (props: any) => <Iconify icon="solar:user-line-duotone" size={24} {...props} />,
   'my-reservations': (props: any) => <Iconify icon="solar:calendar-linear" size={24} {...props} />,
   'branch-reservations': (props: any) => (
-    <Iconify icon="solar:calendar-linear" size={24} {...props} />
+    <Iconify icon="solar:calendar-search-linear" size={24} {...props} />
   ),
 };
 
@@ -24,7 +24,7 @@ const icons_focused = {
   profile: (props: any) => <Iconify icon="solar:user-bold-duotone" size={24} {...props} />,
   'my-reservations': (props: any) => <Iconify icon="solar:calendar-bold" size={24} {...props} />,
   'branch-reservations': (props: any) => (
-    <Iconify icon="solar:calendar-bold" size={24} {...props} />
+    <Iconify icon="solar:calendar-search-bold" size={24} {...props} />
   ),
 };
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 
 import { router, useFocusEffect } from 'expo-router';
 import { getNetworkStateAsync } from 'expo-network';
@@ -81,7 +81,7 @@ export default function Home() {
         long: location?.longitude,
       })
       .eq('sector', selectedSector)
-      .select('*, working_hour(*)')
+      .select('*, working_hour(*), rating:reservation!id(rating.avg())')
       .limit(5);
 
     if (error) {

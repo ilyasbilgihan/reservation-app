@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "version": ">= 10.2.2"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "<FILL_BEFORE_PRODUCTION>",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "<FILL_BEFORE_PRODUCTION>"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

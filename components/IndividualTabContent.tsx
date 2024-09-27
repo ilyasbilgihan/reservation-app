@@ -39,6 +39,7 @@ const IndividualTabContent = () => {
 
     let uploadedImageUrl = null;
     if (image !== undefined) {
+      //@ts-ignore
       const { url, error } = await uploadImageToSupabaseBucket('avatars', image);
       if (error) {
         console.log('image upload error', error);
@@ -129,7 +130,7 @@ const IndividualTabContent = () => {
             <Image
               source={
                 image
-                  ? { uri: image.uri }
+                  ? { uri: Array.isArray(image) ? image[0].uri : image.uri }
                   : formData.avatar
                     ? { uri: formData.avatar }
                     : require('~/assets/no-image.png')
@@ -179,6 +180,14 @@ const IndividualTabContent = () => {
             hatırlatmak isteriz.
           </Text>
         ) : null}
+        <Button
+          variant="destructive"
+          onPress={() => {
+            supabase.auth.signOut();
+          }}
+          disabled={loading}>
+          <Text className="text-slate-100">Çıkış Yap</Text>
+        </Button>
       </View>
     </ScrollView>
   );

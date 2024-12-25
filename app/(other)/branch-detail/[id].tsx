@@ -64,17 +64,19 @@ const BranchDetail = () => {
                     source={{ uri: branch?.thumbnail }}
                     style={{ aspectRatio: 1 }}
                     className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
-                    <Animated.View entering={FadeInDown.duration(500)}>
+                    <Animated.View
+                      entering={FadeInDown.duration(500)}
+                      className="flex-row justify-end">
                       {is_open ? (
                         <Text
                           style={{ lineHeight: 16 }}
-                          className="ml-auto rounded-lg bg-emerald-400 px-3.5 py-1.5 font-qs-semibold text-sm text-emerald-50">
+                          className="rounded-lg bg-emerald-400 px-3.5 py-1.5 font-qs-semibold text-sm text-emerald-50">
                           Şuan açık
                         </Text>
                       ) : (
                         <Text
                           style={{ lineHeight: 16 }}
-                          className="ml-auto rounded-lg bg-slate-400 px-3.5 py-1.5 font-qs-semibold text-sm text-slate-100">
+                          className="rounded-lg bg-slate-400 px-3.5 py-1.5 font-qs-semibold text-sm text-slate-100">
                           Kapalı
                         </Text>
                       )}
@@ -117,7 +119,7 @@ const BranchDetail = () => {
                         İşletmemizden görseller
                       </Animated.Text>
                       <TouchableOpacity activeOpacity={0.75} onPress={openGallery}>
-                        <View className="w-full flex-row items-center justify-between gap-3.5">
+                        <View className="w-full flex-row items-center justify-between">
                           {// array from num_of_max_images
                           branch.branch_image?.map((image: any, index: number) => {
                             return (
@@ -128,7 +130,8 @@ const BranchDetail = () => {
                                   .springify()
                                   .duration(2000)}
                                 key={image.id}
-                                className="aspect-square flex-1 items-center justify-center overflow-hidden rounded-xl border border-input bg-background">
+                                style={{ width: '22%' }}
+                                className="aspect-square items-center justify-center overflow-hidden rounded-xl border border-input bg-background">
                                 <Animated.Image
                                   entering={FadeIn.delay(
                                     (1000 / branch.branch_image.length) * index
@@ -154,7 +157,7 @@ const BranchDetail = () => {
                         Müşteri Değerlendirmeleri ({branch?.reservations?.length})
                       </Text>
                       {branch?.reservations?.map((item: any) => (
-                        <View>
+                        <View key={item?.id}>
                           <View className="flex-row items-center justify-between">
                             <View className="flex-row items-center gap-3.5">
                               <Image
@@ -187,9 +190,7 @@ const BranchDetail = () => {
                   ) : null}
 
                   <Animated.View entering={FadeInUp.duration(500)} className="gap-3.5">
-                    <Text className="bg-background font-qs-semibold text-2xl">
-                      Çalışma Saatlerimiz
-                    </Text>
+                    <Text className="font-qs-semibold text-2xl">Çalışma Saatlerimiz</Text>
                     <View className="gap-1">
                       {branch.working_hour?.map((item: any) => {
                         let isClosed =
@@ -226,8 +227,8 @@ const BranchDetail = () => {
                         initialRegion={{
                           longitude: branch.long,
                           latitude: branch.lat,
-                          latitudeDelta: 0.005,
-                          longitudeDelta: 0.005,
+                          latitudeDelta: 0.008,
+                          longitudeDelta: 0.008,
                         }}
                         style={{ width: '100%', height: '100%' }}>
                         <MapMarker

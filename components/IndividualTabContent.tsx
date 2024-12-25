@@ -76,7 +76,7 @@ const IndividualTabContent = () => {
   };
 
   const isValidForm = useCallback(() => {
-    let name = formData.full_name.trim();
+    let name = formData.full_name?.trim();
 
     // regex to check phone number
     let regex = /^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/;

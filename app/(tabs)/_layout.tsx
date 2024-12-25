@@ -11,7 +11,6 @@ export default function TabLayout() {
   return (
     <Tabs
       tabBar={TabBar}
-      sceneContainerStyle={{ backgroundColor: 'white', paddingBottom: 70 }}
       screenOptions={{
         headerTitleAlign: 'center',
         headerStyle: { backgroundColor: 'white' },
@@ -19,6 +18,7 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
         tabBarInactiveTintColor: 'rgb(101 115 134)',
         tabBarActiveTintColor: 'hsl(260 51% 41%)',
+        sceneStyle: { backgroundColor: 'white', paddingBottom: 70 },
       }}>
       <Tabs.Screen
         name="index"

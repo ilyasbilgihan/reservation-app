@@ -124,10 +124,11 @@ export default function Home() {
           </LocationPicker>
         </View>
         <Animated.View entering={FadeInUp.duration(500)}>
-          <Text className="px-7 pb-3.5 pt-14 font-qs-medium text-4xl leading-3">
-            Hangi <Text className="bg-violet-200 font-qs-semibold text-4xl">sektörde</Text>{' '}
-            <Text className="bg-amber-200 font-qs-semibold text-4xl">rezervasyona</Text> ihtiyacın
-            var?
+          <Text className="px-7 pb-3.5 pt-14 font-qs-medium text-4xl ">
+            Hangi{' '}
+            <Text className="bg-violet-200 font-qs-semibold text-4xl leading-3">sektörde</Text>{' '}
+            <Text className="bg-amber-200 font-qs-semibold text-4xl leading-3">rezervasyona</Text>{' '}
+            ihtiyacın var?
           </Text>
         </Animated.View>
         <Animated.FlatList

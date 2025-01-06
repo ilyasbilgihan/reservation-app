@@ -5,13 +5,13 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { supabase } from '~/utils/supabase';
 
-import { Text } from './ui/text';
+import { Text } from '../ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
-import BranchFormBottomSheet from './BranchFormBottomSheet';
+import BranchFormBottomSheet from '../BottomSheetComponents/BranchForm';
 import { useFocusEffect } from 'expo-router';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { getSectorItem } from '~/utils/getLabels';
-import BranchItem from './BranchItem';
+import BranchItem from '../BranchItem';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 
 const BranchTabContent = () => {

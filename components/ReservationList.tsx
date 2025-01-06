@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Text } from './ui/text';
 import ReservationCard from './ReservationCard';
-import ReservationBottomSheet from './ReservationBottomSheet';
+import ReservationBottomSheet from './BottomSheetComponents/ReservationInfo';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const ReservationList = ({

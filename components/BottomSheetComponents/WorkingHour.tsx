@@ -9,7 +9,7 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { supabase } from '~/utils/supabase';
 import { getDayLabel } from '~/utils/getLabels';
 
-import BottomSheet from './BottomSheet';
+import BottomSheet from '../BottomSheet';
 import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 

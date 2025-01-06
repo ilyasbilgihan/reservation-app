@@ -9,12 +9,12 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { supabase } from '~/utils/supabase';
 
 import { Iconify } from '~/lib/icons/Iconify';
-import BottomSheet from './BottomSheet';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { Text } from './ui/text';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import BottomSheet from '../BottomSheet';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Text } from '../ui/text';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 import { getSectorItem } from '~/utils/getLabels';
 

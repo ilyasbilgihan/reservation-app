@@ -18,7 +18,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GlobalProvider } from '~/context/GlobalProvider';
 
-import { useFonts } from 'expo-font';
+import { useLoadFonts } from '~/lib/useLoadFonts';
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -43,13 +43,11 @@ export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
-  const [loaded, error] = useFonts({
-    'Quicksand Light': require('../assets/fonts/Quicksand-Light.ttf'),
-    'Quicksand Bold': require('../assets/fonts/Quicksand-Bold.ttf'),
-    'Quicksand Medium': require('../assets/fonts/Quicksand-Medium.ttf'),
-    Quicksand: require('../assets/fonts/Quicksand-Regular.ttf'),
-    'Quicksand SemiBold': require('../assets/fonts/Quicksand-SemiBold.ttf'),
-  });
+  const { loaded, error } = useLoadFonts();
+
+  React.useEffect(() => {
+    if (error) throw error;
+  }, [error]);
 
   React.useEffect(() => {
     (async () => {
@@ -75,9 +73,8 @@ export default function RootLayout() {
   }, []);
 
   React.useEffect(() => {
-    if (error) throw error;
     if (loaded && isColorSchemeLoaded) SplashScreen.hideAsync();
-  }, [loaded, setIsColorSchemeLoaded]);
+  }, [loaded, isColorSchemeLoaded]);
 
   if (!isColorSchemeLoaded || !loaded) {
     return null;
@@ -95,7 +92,7 @@ export default function RootLayout() {
             </Stack>
           </BottomSheetModalProvider>
           <PortalHost />
-        </GestureHandlerRootView>
+          </GestureHandlerRootView>
       </ThemeProvider>
     </GlobalProvider>
   );

@@ -6,7 +6,7 @@ import Animated, { Easing, useSharedValue, withTiming } from 'react-native-reani
 import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { Text } from '~/components/ui/text';
-import BranchFormBottomSheet from './BranchFormBottomSheet';
+import BranchFormBottomSheet from './BottomSheetComponents/BranchForm';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const BranchItem = ({ item, onUpdate }: any) => {

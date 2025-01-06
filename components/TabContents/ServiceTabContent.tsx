@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, TouchableOpacity, Alert, Dimensions } from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
@@ -9,26 +9,25 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { supabase } from '~/utils/supabase';
 
 import { Iconify } from '~/lib/icons/Iconify';
-import AssetFormBottomSheet from './AssetFormBottomSheet';
-import { Text } from './ui/text';
+import { Text } from '../ui/text';
 
-import { getSectorItem } from '~/utils/getLabels';
+import ServiceFormBottomSheet from '../BottomSheetComponents/ServiceForm';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const AssetTabContent = () => {
+const ServiceTabContent = () => {
   const { branch } = useGlobalContext();
-  const [assets, setAssets] = useState<any>([]);
-  const assetModalRef = useRef<BottomSheetModal>(null);
+  const [services, setServices] = useState<any>([]);
+  const serviceModalRef = useRef<BottomSheetModal>(null);
   useFocusEffect(
     useCallback(() => {
-      fetchAssets();
+      fetchServices();
     }, [branch?.id])
   );
 
-  const fetchAssets = async () => {
+  const fetchServices = async () => {
     const { data, error } = await supabase
-      .from('asset')
+      .from('service')
       .select('*')
       .eq('branch_id', branch?.id)
       .order('id');
@@ -36,7 +35,7 @@ const AssetTabContent = () => {
       Alert.alert(error.message);
       console.log(error);
     } else {
-      setAssets(data);
+      setServices(data);
     }
   };
 
@@ -44,44 +43,40 @@ const AssetTabContent = () => {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchAssets();
+    await fetchServices();
     setRefreshing(false);
   }, []);
 
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View className="flex-row justify-between p-7">
-        <Text className="font-qs-semibold text-2xl">
-          Rezerv {getSectorItem(branch?.sector?.value)?.title}
-        </Text>
+        <Text className="font-qs-semibold text-2xl">Şube Hizmetlerim</Text>
         <TouchableOpacity
           activeOpacity={0.75}
           onPress={() => {
-            assetModalRef.current?.present();
+            serviceModalRef.current?.present();
           }}>
           <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
         </TouchableOpacity>
-        <AssetFormBottomSheet
-          ref={assetModalRef}
+        <ServiceFormBottomSheet
+          ref={serviceModalRef}
           onCreate={() => {
-            fetchAssets();
-            assetModalRef.current?.dismiss();
+            fetchServices();
+            serviceModalRef.current?.dismiss();
           }}
         />
       </View>
-      {assets.length > 0 ? (
+      {services.length > 0 ? (
         <View className="gap-4 pb-7">
-          {assets?.map((item: any) => (
-            <SwipeableItem key={item.id} asset={item} fetchAssets={fetchAssets} />
+          {services?.map((item: any) => (
+            <SwipeableItem key={item.id} service={item} fetchServices={fetchServices} />
           ))}
         </View>
       ) : (
         <View className="items-center gap-4 py-7">
           <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
           <View className="items-center">
-            <Text className="text-muted-foreground">
-              Henüz bir {getSectorItem(branch?.sector?.value)?.singular} eklememişsiniz.
-            </Text>
+            <Text className="text-muted-foreground">Henüz bir hizmet eklememişsiniz.</Text>
             <Text className="text-muted-foreground">
               Eklemek isterseniz sağ üstteki artı butonuna tıklayınız.
             </Text>
@@ -92,24 +87,24 @@ const AssetTabContent = () => {
   );
 };
 
-const SwipeableItem = ({ asset, fetchAssets }: any) => {
-  const handleActivateAsset = async () => {
-    const { error } = await supabase.from('asset').update({ active: true }).eq('id', asset.id);
+const SwipeableItem = ({ service, fetchServices }: any) => {
+  const handleActivateService = async () => {
+    const { error } = await supabase.from('service').update({ active: true }).eq('id', service.id);
     if (!error) {
-      await fetchAssets();
+      await fetchServices();
     }
     ref.current?.close();
   };
-  const handleDeactivateAsset = async () => {
-    const { error } = await supabase.from('asset').update({ active: false }).eq('id', asset.id);
+  const handleDeactivateService = async () => {
+    const { error } = await supabase.from('service').update({ active: false }).eq('id', service.id);
     if (!error) {
-      await fetchAssets();
+      await fetchServices();
     }
     ref.current?.close();
   };
 
   const ref = useRef<Swipeable>(null);
-  const assetModalRef = useRef<BottomSheetModal>(null);
+  const serviceModalRef = useRef<BottomSheetModal>(null);
 
   return (
     <>
@@ -118,7 +113,7 @@ const SwipeableItem = ({ asset, fetchAssets }: any) => {
         leftThreshold={100}
         rightThreshold={100}
         containerStyle={{ paddingHorizontal: 28 }}
-        key={asset.id}
+        key={service.id}
         renderLeftActions={() => {
           return (
             <View
@@ -139,35 +134,35 @@ const SwipeableItem = ({ asset, fetchAssets }: any) => {
         }}
         onSwipeableWillOpen={(direction) => {
           if (direction === 'left') {
-            handleActivateAsset();
+            handleActivateService();
           } else {
-            handleDeactivateAsset();
+            handleDeactivateService();
           }
         }}>
         <TouchableOpacity
           activeOpacity={0.75}
           onPress={() => {
-            assetModalRef.current?.present();
+            serviceModalRef.current?.present();
           }}>
           <View
             style={{
-              backgroundColor: asset?.active ? 'rgb(236 253 245)' : 'rgb(255 241 242)',
+              backgroundColor: service?.active ? 'rgb(236 253 245)' : 'rgb(255 241 242)',
             }}
             className="flex-row rounded-xl p-4">
-            <Text className="text-lg">{asset.name}</Text>
+            <Text className="text-lg">{service.name}</Text>
           </View>
         </TouchableOpacity>
       </Swipeable>
-      <AssetFormBottomSheet
-        ref={assetModalRef}
-        asset={asset}
+      <ServiceFormBottomSheet
+        ref={serviceModalRef}
+        service={service}
         onCreate={() => {
-          fetchAssets();
-          assetModalRef.current?.dismiss();
+          fetchServices();
+          serviceModalRef.current?.dismiss();
         }}
       />
     </>
   );
 };
 
-export default AssetTabContent;
+export default ServiceTabContent;

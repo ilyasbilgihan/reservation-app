@@ -10,8 +10,8 @@ import Animated, {
 import { ScrollView } from 'react-native-gesture-handler';
 import { Text } from '~/components/ui/text';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import BranchTabContent from '~/components/BranchTabContent';
-import IndividualTabContent from '~/components/IndividualTabContent';
+import BranchTabContent from '~/components/TabContents/BranchTabContent';
+import IndividualTabContent from '~/components/TabContents/IndividualTabContent';
 
 export default function Profile() {
   const [value, setValue] = useState('individual');

@@ -1,8 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, ImageBackground, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, ImageBackground} from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
-import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
@@ -17,13 +16,11 @@ import Animated, {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
-import WorkingHourBottomSheet from '~/components/WorkingHourBottomSheet';
+import WorkingHourBottomSheet from '~/components/BottomSheetComponents/WorkingHour';
 
 import { getSectorItem } from '~/utils/getLabels';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import AssetFormBottomSheet from '~/components/AssetFormBottomSheet';
-import AssetTabContent from '~/components/AssetTabContent';
-import ServiceTabContent from '~/components/ServiceTabContent';
+import AssetTabContent from '~/components/TabContents/AssetTabContent';
+import ServiceTabContent from '~/components/TabContents/ServiceTabContent';
 
 const Branch = () => {
   const { branch } = useGlobalContext();

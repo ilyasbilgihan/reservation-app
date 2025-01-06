@@ -3,15 +3,15 @@ import { View, TouchableOpacity, Image, Alert, Pressable } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
-import BottomSheet from './BottomSheet';
+import BottomSheet from '../BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import useImagePicker from '~/utils/useImagePicker';
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Select,
@@ -21,12 +21,12 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
+} from '../ui/select';
 import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import { getSectorItem } from '~/utils/getLabels';
-import { Text } from './ui/text';
-import LocationPicker from './LocationPicker';
-import { Textarea } from './ui/textarea';
+import { Text } from '../ui/text';
+import LocationPicker from '../LocationPicker';
+import { Textarea } from '../ui/textarea';
 
 const NUM_OF_MAX_IMAGES = 4;
 

@@ -3,16 +3,16 @@ import { View, Alert } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
-import BottomSheet from './BottomSheet';
+import BottomSheet from '../BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { supabase } from '~/utils/supabase';
-import { Text } from './ui/text';
-import { Textarea } from './ui/textarea';
+import { Text } from '../ui/text';
+import { Textarea } from '../ui/textarea';
 
 const ReservationBottomSheet = forwardRef<
   BottomSheetModal,

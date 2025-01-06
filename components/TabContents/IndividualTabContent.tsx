@@ -7,10 +7,10 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
 import useImagePicker from '~/utils/useImagePicker';
-import { Text } from './ui/text';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Text } from '../ui/text';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 
 const IndividualTabContent = () => {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, BackHandler, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp, FadeOutLeft } from 'react-native-reanimated';
 import { useDateRange } from '@marceloterreiro/flash-calendar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -15,6 +15,9 @@ import ReservationFirstStep from '~/components/ReservationSteps/FirstStep';
 import ReservationSecondStep from '~/components/ReservationSteps/SecondStep';
 import ReservationFinalStep from '~/components/ReservationSteps/FinalStep';
 import { useGlobalContext } from '~/context/GlobalProvider';
+import { Iconify } from '~/lib/icons/Iconify';
+import { getSectorItem } from '~/utils/getLabels';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 type Asset = {
   id: number;
@@ -211,14 +214,39 @@ export default function Reservation() {
       if (err.length > 0) {
         await supabase.from('reservation').delete().eq('id', insertData[0].id);
       } else {
-        router.replace(`/branch-detail/${branch?.id}`);
+        router.back();
       }
       setLoading(false);
     }
   };
 
   return (
-    <View style={{ ...insets, marginBottom: insets.top }}>
+    <View style={{ ...insets, marginBottom: insets.top }} className="flex-1">
+      <TouchableOpacity onPress={() => {
+        step == '1'
+          ? router.back()
+          : setStep('' + (+step - 1));
+      }}>
+      <View className="flex-row items-center px-7 py-3.5">
+        <Animated.View
+          entering={FadeInUp.duration(1000)}
+          exiting={FadeOutLeft.duration(1000)}
+          className="flex-1 flex-row items-center gap-3.5 pr-3.5">
+          <Iconify icon="solar:arrow-left-linear" size={24} color={'black'} className="" />
+          <Text numberOfLines={1} className="flex-1 font-qs-semibold text-lg leading-6 capitalize">
+            {
+              [branch?.name, getSectorItem(branch?.sector)?.singular +" & Hizmet Seçimi", "Tarih & Saat Seçimi"][(+step) - 1]
+            }
+          </Text>
+        </Animated.View>
+        <Animated.Text
+          className="ml-auto"
+          entering={FadeInUp.duration(1000)}
+          exiting={FadeOutLeft.duration(1000)}>
+          Adım {step}/3
+        </Animated.Text>
+      </View>
+      </TouchableOpacity>
       <Tabs value={step} onValueChange={setStep} className="mx-auto w-full max-w-[400px] flex-col">
         <TabsContent value="1">
           <ReservationFirstStep
@@ -246,7 +274,7 @@ export default function Reservation() {
         </TabsContent>
       </Tabs>
       <View className="absolute bottom-0 z-50 w-full p-7">
-        <Animated.View entering={FadeInDown.duration(500)}>
+        <Animated.View entering={FadeInDown.duration(1000)}>
           <Button
             disabled={!checkValid() && !loading}
             className="rounded-xl"

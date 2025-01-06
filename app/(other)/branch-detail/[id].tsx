@@ -245,7 +245,7 @@ const BranchDetail = () => {
             ) : null}
           </ScrollView>
           <View className="absolute bottom-0 w-full p-7">
-            <Animated.View entering={FadeInDown.duration(2000)}>
+            <Animated.View entering={FadeInDown.duration(1000)}>
               <Button
                 className="rounded-xl"
                 onPress={() => {

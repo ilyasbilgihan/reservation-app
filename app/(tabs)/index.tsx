@@ -104,7 +104,7 @@ export default function Home() {
             <View className="flex-1 justify-between">
               <Text>Hoşgeldin,</Text>
               <Text numberOfLines={1} className="font-qs-semibold text-lg">
-                {profile?.full_name}
+                {profile?.full_name || "Bilinmeyen Kullanıcı"}
               </Text>
             </View>
           </Animated.View>

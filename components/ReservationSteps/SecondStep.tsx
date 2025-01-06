@@ -84,23 +84,6 @@ const SecondStep = ({
 
   return (
     <View className="h-full">
-      <View className="flex-row items-center px-7 py-3.5">
-        <Animated.View
-          entering={FadeInUp.duration(500)}
-          exiting={FadeOutLeft.duration(500)}
-          className="flex-1 flex-row items-center gap-3.5 pr-3.5">
-          <Iconify icon="solar:arrow-left-linear" size={24} color={'black'} className="" />
-          <Text numberOfLines={1} className="flex-1 font-qs-semibold text-lg capitalize leading-6">
-            {getSectorItem(branch?.sector)?.singular} & Hizmet Seçimi
-          </Text>
-        </Animated.View>
-        <Animated.Text
-          className="ml-auto"
-          entering={FadeInUp.duration(500)}
-          exiting={FadeOutLeft.duration(500)}>
-          Adım 2/3
-        </Animated.Text>
-      </View>
       <View className="flex-1">
         <ScrollView>
           <View className="pb-24">

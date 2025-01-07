@@ -10,7 +10,7 @@ import { useGlobalContext } from '~/context/GlobalProvider';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 import { Text } from '../ui/text';
 import { Textarea } from '../ui/textarea';
 

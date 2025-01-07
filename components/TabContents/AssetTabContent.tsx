@@ -6,13 +6,13 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { RefreshControl, ScrollView, Swipeable } from 'react-native-gesture-handler';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import AssetFormBottomSheet from '../BottomSheetComponents/AssetForm';
 import { Text } from '../ui/text';
 
-import { getSectorItem } from '~/utils/getLabels';
+import { getSectorItem } from '~/lib/utils/getLabels';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

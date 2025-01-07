@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useGlobalContext } from '~/context/GlobalProvider';
 
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input } from '~/components/ui/input';

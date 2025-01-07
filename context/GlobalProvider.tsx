@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { Session } from '@supabase/supabase-js';
-import { supabase } from '~/utils/supabase';
-import { getItem, setItem } from '~/core/storage';
+import { supabase } from '~/lib/supabase';
+import { getItem, setItem } from '~/lib/storage';
 
 type Location = {
   latitude: number | null;

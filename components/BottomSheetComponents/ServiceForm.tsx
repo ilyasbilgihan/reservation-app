@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 
 import { Iconify } from '~/lib/icons/Iconify';
 import BottomSheet from '../BottomSheet';
@@ -16,7 +16,7 @@ import { Button } from '../ui/button';
 import { Text } from '../ui/text';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
-import { getSectorItem } from '~/utils/getLabels';
+import { getSectorItem } from '~/lib/utils/getLabels';
 
 const ServiceFormBottomSheet = forwardRef<
   BottomSheetModal,

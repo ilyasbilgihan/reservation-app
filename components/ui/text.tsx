@@ -2,7 +2,7 @@ import * as Slot from '@rn-primitives/slot';
 import { SlottableTextProps, TextRef } from '@rn-primitives/types';
 import * as React from 'react';
 import { Text as RNText, Animated as RNAnimated, StyleSheet } from 'react-native';
-import { cn } from '~/lib/utils';
+import { cn } from '~/lib/utils/cn';
 
 const TextClassContext = React.createContext<string | undefined>(undefined);
 

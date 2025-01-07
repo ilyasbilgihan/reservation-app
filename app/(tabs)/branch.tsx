@@ -18,7 +18,7 @@ import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 import WorkingHourBottomSheet from '~/components/BottomSheetComponents/WorkingHour';
 
-import { getSectorItem } from '~/utils/getLabels';
+import { getSectorItem } from '~/lib/utils/getLabels';
 import AssetTabContent from '~/components/TabContents/AssetTabContent';
 import ServiceTabContent from '~/components/TabContents/ServiceTabContent';
 

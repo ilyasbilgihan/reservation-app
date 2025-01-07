@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { X } from '~/lib/icons/X';
-import { cn } from '~/lib/utils';
+import { cn } from '~/lib/utils/cn';
 
 const Dialog = DialogPrimitive.Root;
 

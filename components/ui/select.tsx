@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Check } from '~/lib/icons/Check';
 import { ChevronDown } from '~/lib/icons/ChevronDown';
 import { ChevronUp } from '~/lib/icons/ChevronUp';
-import { cn } from '~/lib/utils';
+import { cn } from '~/lib/utils/cn';
 
 type Option = SelectPrimitive.Option;
 

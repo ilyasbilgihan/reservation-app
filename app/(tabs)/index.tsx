@@ -8,8 +8,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { supabase } from '~/utils/supabase';
-import { getSectorItem } from '~/utils/getLabels';
+import { supabase } from '~/lib/supabase';
+import { getSectorItem } from '~/lib/utils/getLabels';
 
 import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';

@@ -4,13 +4,13 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, { FadeInLeft, FadeInUp, FadeOutLeft } from 'react-native-reanimated';
 import { Calendar, CalendarTheme, toDateId } from '@marceloterreiro/flash-calendar';
 
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 
 import { Text } from '../ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
 import { Service } from '~/app/(other)/reservation/[id]';
-import { generateTimeList } from '~/utils/reservation';
-import { getSectorItem } from '~/utils/getLabels';
+import { generateTimeList } from '~/lib/utils/reservation';
+import { getSectorItem } from '~/lib/utils/getLabels';
 
 type ReservedTime =
   | {

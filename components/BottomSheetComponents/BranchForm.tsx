@@ -6,7 +6,7 @@ import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
 import BottomSheet from '../BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
-import useImagePicker from '~/utils/useImagePicker';
+import useImagePicker from '~/lib/hooks/useImagePicker';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -22,8 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
-import { getSectorItem } from '~/utils/getLabels';
+import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/lib/supabase';
+import { getSectorItem } from '~/lib/utils/getLabels';
 import { Text } from '../ui/text';
 import LocationPicker from '../LocationPicker';
 import { Textarea } from '../ui/textarea';

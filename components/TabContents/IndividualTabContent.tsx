@@ -5,8 +5,8 @@ import { useFocusEffect } from 'expo-router';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
 
-import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/utils/supabase';
-import useImagePicker from '~/utils/useImagePicker';
+import { deleteImage, supabase, uploadImageToSupabaseBucket } from '~/lib/supabase';
+import useImagePicker from '~/lib/hooks/useImagePicker';
 import { Text } from '../ui/text';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';

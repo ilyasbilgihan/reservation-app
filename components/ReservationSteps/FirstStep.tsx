@@ -12,7 +12,7 @@ import Animated, {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from '../ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
-import { getSectorItem } from '~/utils/getLabels';
+import { getSectorItem } from '~/lib/utils/getLabels';
 
 import { Service } from '~/app/(other)/reservation/[id]';
 

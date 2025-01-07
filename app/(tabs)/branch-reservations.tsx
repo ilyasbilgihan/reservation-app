@@ -3,7 +3,7 @@ import { Pressable, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 import { useGlobalContext } from '~/context/GlobalProvider';
 
 import { Iconify } from '~/lib/icons/Iconify';

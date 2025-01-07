@@ -12,13 +12,13 @@ import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { useColorScheme } from '~/lib/hooks/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GlobalProvider } from '~/context/GlobalProvider';
 
-import { useLoadFonts } from '~/lib/useLoadFonts';
+import { useLoadFonts } from '~/lib/hooks/useLoadFonts';
 
 const LIGHT_THEME: Theme = {
   dark: false,

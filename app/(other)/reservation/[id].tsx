@@ -8,15 +8,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Tabs, TabsContent } from '~/components/ui/tabs';
-import { supabase } from '~/utils/supabase';
-import { getDatesInRange, getOffDayDatesOfCurrentYear } from '~/utils/reservation';
+import { supabase } from '~/lib/supabase';
+import { getDatesInRange, getOffDayDatesOfCurrentYear } from '~/lib/utils/reservation';
 
 import ReservationFirstStep from '~/components/ReservationSteps/FirstStep';
 import ReservationSecondStep from '~/components/ReservationSteps/SecondStep';
 import ReservationFinalStep from '~/components/ReservationSteps/FinalStep';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { Iconify } from '~/lib/icons/Iconify';
-import { getSectorItem } from '~/utils/getLabels';
+import { getSectorItem } from '~/lib/utils/getLabels';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 type Asset = {

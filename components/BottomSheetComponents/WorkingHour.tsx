@@ -6,8 +6,8 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import { useGlobalContext } from '~/context/GlobalProvider';
-import { supabase } from '~/utils/supabase';
-import { getDayLabel } from '~/utils/getLabels';
+import { supabase } from '~/lib/supabase';
+import { getDayLabel } from '~/lib/utils/getLabels';
 
 import BottomSheet from '../BottomSheet';
 import { Text } from '~/components/ui/text';

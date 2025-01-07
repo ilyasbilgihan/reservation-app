@@ -6,13 +6,13 @@ import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated'
 
 import { Text } from '~/components/ui/text';
 import { Iconify } from '~/lib/icons/Iconify';
-import { supabase } from '~/utils/supabase';
+import { supabase } from '~/lib/supabase';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { ImageGallery } from '@georstat/react-native-image-gallery';
 import { Button } from '~/components/ui/button';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import MapView, { MapMarker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { getDayLabel } from '~/utils/getLabels';
+import { getDayLabel } from '~/lib/utils/getLabels';
 
 const BranchDetail = () => {
   const { location } = useGlobalContext();

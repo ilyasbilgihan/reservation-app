@@ -6,15 +6,15 @@ import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
 import BottomSheet from '../BottomSheet';
 
 import { Iconify } from '~/lib/icons/Iconify';
-import useImagePicker from '~/utils/useImagePicker';
+import useImagePicker from '~/lib/hooks/useImagePicker';
 import { useGlobalContext } from '~/context/GlobalProvider';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { supabase } from '~/utils/supabase';
-import { getSectorItem } from '~/utils/getLabels';
+import { supabase } from '~/lib/supabase';
+import { getSectorItem } from '~/lib/utils/getLabels';
 import { Text } from '../ui/text';
 
 const AssetFormBottomSheet = forwardRef<

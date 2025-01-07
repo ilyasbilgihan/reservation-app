@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { View, Image } from 'react-native';
+import { router } from 'expo-router';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
 
@@ -41,6 +42,7 @@ const BranchItem = ({ item, onUpdate }: any) => {
     .onEnd(() => {
       if (branch?.id != item.id) {
         setBranch(item);
+        router.replace('/(tabs)/branch');
       } else {
         setBranch(null);
       }

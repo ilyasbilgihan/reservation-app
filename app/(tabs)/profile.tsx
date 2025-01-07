@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import Animated, {
-  FadeInLeft,
-  FadeInRight,
-  FadeOutLeft,
-  FadeOutRight,
-} from 'react-native-reanimated';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Text } from '~/components/ui/text';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import BranchTabContent from '~/components/TabContents/BranchTabContent';
@@ -32,24 +25,10 @@ export default function Profile() {
         </TabsList>
       </View>
       <TabsContent value="individual" className="flex-1">
-        <ScrollView>
-          <Animated.View
-            className="gap-4 px-7 py-7"
-            entering={FadeInLeft.delay(250).duration(250)}
-            exiting={FadeOutLeft.duration(500)}>
-            <IndividualTabContent />
-          </Animated.View>
-        </ScrollView>
+        <IndividualTabContent />
       </TabsContent>
       <TabsContent value="company" className="flex-1">
-        <ScrollView>
-          <Animated.View
-            className="py-7"
-            entering={FadeInRight.delay(250).duration(250)}
-            exiting={FadeOutRight.duration(500)}>
-            <BranchTabContent />
-          </Animated.View>
-        </ScrollView>
+        <BranchTabContent />
       </TabsContent>
     </Tabs>
   );

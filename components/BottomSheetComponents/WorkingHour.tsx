@@ -69,7 +69,7 @@ const WorkingHourBottomSheet = () => {
   };
 
   return (
-    <>
+    <View className="items-end">
       <TouchableOpacity activeOpacity={0.75} onPress={handleOpenWorkingHours}>
         <View style={{ borderRadius: 10 }} className="flex-row gap-2 bg-white p-3.5">
           <Iconify icon="solar:sort-by-time-bold-duotone" size={24} className="text-slate-900" />
@@ -136,7 +136,7 @@ const WorkingHourBottomSheet = () => {
           </ScrollView>
         </BottomSheetView>
       </BottomSheet>
-    </>
+    </View>
   );
 };
 

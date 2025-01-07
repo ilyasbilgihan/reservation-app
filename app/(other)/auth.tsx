@@ -112,8 +112,8 @@ const SignIn = () => {
           {formState === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
         </Text>
       </View>
-      <ScrollView>
-        <View className="gap-4 px-7">
+      <ScrollView className="h-full">
+        <View className="gap-4 px-7 pb-24">
           <View className="items-center">
             <Image source={require('~/assets/splash.webp')} className="my-8 h-72 w-72" />
           </View>

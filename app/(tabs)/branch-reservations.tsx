@@ -53,7 +53,7 @@ const BranchReservations = () => {
     } else {
       setReservationDates(data);
       let tmp = data?.map((item: any) => item.reservation);
-      let tmp2 = tmp.filter((obj1, i, arr) => arr.findIndex((obj2) => obj2?.id === obj1?.id) === i);
+      let tmp2 = [...new Map(tmp.map((obj) => [obj?.id, obj])).values()];
       setReservations(tmp2);
     }
   };
@@ -61,19 +61,6 @@ const BranchReservations = () => {
   const pendingReservations = reservations?.filter((item: any) => item?.status === 'pending');
   const approvedReservations = reservations?.filter((item: any) => item?.status === 'approved');
   const doneReservations = reservations?.filter((item: any) => item?.status === 'done');
-
-  const insets = useSafeAreaInsets();
-  const contentInsets = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: 28,
-    right: 28,
-  };
-
-  const handleConfirmDate = async (date: any) => {
-    setSelectedDate(new Date(date).toISOString().slice(0, 10));
-    setDatePickerVisibility(false);
-  };
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -84,47 +71,15 @@ const BranchReservations = () => {
     setRefreshing(false);
   }, [selectedDate, branch]);
 
-  const [datePickerVisibility, setDatePickerVisibility] = useState(false);
   return (
     <SafeAreaView>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <View className="p-7">
           <View className="mb-3.5 flex-row items-center gap-3.5">
             <Text className="font-qs-bold text-3xl text-slate-700">Rezervasyonlar</Text>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Pressable>
-                  <Iconify
-                    icon="solar:question-circle-bold"
-                    size={24}
-                    className=" text-slate-400"
-                  />
-                </Pressable>
-              </TooltipTrigger>
-              <TooltipContent insets={contentInsets}>
-                <Text className="text-sm text-slate-700">
-                  Rezervasyon teklifini onaylamak veya iptal etmek için basılı tutunuz.
-                </Text>
-              </TooltipContent>
-            </Tooltip>
+            <InfoTooltip />
           </View>
-          <TouchableOpacity activeOpacity={0.75} onPress={() => setDatePickerVisibility(true)}>
-            <View className="flex-row items-center gap-3.5 rounded-xl border border-input p-3.5">
-              <Iconify
-                icon="solar:calendar-search-bold-duotone"
-                size={22}
-                className="text-slate-400"
-              />
-              <Text className="font-qs-semibold leading-5 text-slate-500">
-                {new Date(selectedDate).toLocaleDateString('tr-TR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'long',
-                })}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <DatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
           <ReservationList
             reservations={pendingReservations}
             reservationServices={reservationServices}
@@ -155,18 +110,67 @@ const BranchReservations = () => {
             title="Tamamlanmış"
             color="rgb(13 148 136)"
           />
-          <DateTimePickerModal
-            isVisible={datePickerVisibility}
-            mode="date"
-            locale="tr"
-            onConfirm={handleConfirmDate}
-            onCancel={() => {
-              setDatePickerVisibility(false);
-            }}
-          />
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+};
+
+const InfoTooltip = () => {
+  const insets = useSafeAreaInsets();
+  const contentInsets = {
+    top: insets.top,
+  };
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Pressable>
+          <Iconify icon="solar:question-circle-bold" size={24} className=" text-slate-400" />
+        </Pressable>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" insets={contentInsets}>
+        <Text className="text-sm text-slate-700">
+          Rezervasyon teklifini onaylamak veya iptal etmek için basılı tutunuz.
+        </Text>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
+const DatePicker = ({ selectedDate, setSelectedDate }: any) => {
+  const handleConfirmDate = async (date: any) => {
+    setSelectedDate(new Date(date).toISOString().slice(0, 10));
+    setDatePickerVisibility(false);
+  };
+
+  const [datePickerVisibility, setDatePickerVisibility] = useState(false);
+  return (
+    <>
+      <TouchableOpacity activeOpacity={0.75} onPress={() => setDatePickerVisibility(true)}>
+        <View className="flex-row items-center gap-3.5 rounded-xl border border-input p-3.5">
+          <Iconify icon="solar:calendar-search-bold-duotone" size={22} className="text-slate-400" />
+          <Text className="font-qs-semibold leading-5 text-slate-500">
+            {new Date(selectedDate).toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              weekday: 'long',
+            })}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <DateTimePickerModal
+        isVisible={datePickerVisibility}
+        date={new Date(selectedDate)}
+        mode="date"
+        locale="tr"
+        onConfirm={handleConfirmDate}
+        onCancel={() => {
+          setDatePickerVisibility(false);
+        }}
+      />
+    </>
   );
 };
 

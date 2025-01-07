@@ -14,6 +14,8 @@ import { getSectorItem } from '~/lib/utils/getLabels';
 import BranchItem from '../BranchItem';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 
+import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
+
 const BranchTabContent = () => {
   const { session } = useGlobalContext();
   const [branches, setBranches] = useState<any>([]);
@@ -55,49 +57,54 @@ const BranchTabContent = () => {
     setRefreshing(false);
   }, []);
   return (
-    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View className="flex-row items-center justify-between px-7">
-        <Text className="font-qs-semibold text-2xl">Şubelerim</Text>
-        <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
-          <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
-        </TouchableOpacity>
-        <BranchFormBottomSheet
-          ref={bottomSheetModalRef}
-          onCreate={() => {
-            fetchBranches();
-            bottomSheetModalRef.current?.dismiss();
-          }}
-        />
-      </View>
-      {branches.length > 0 ? (
-        <View className="mt-4 gap-4 px-7">
-          {branches.map((item: any) => (
-            <BranchItem
-              item={item}
-              key={item.id}
-              onUpdate={() => {
-                fetchBranches();
-              }}
-            />
-          ))}
-          <Text>
-            * Şube görünümüne girmek veya şube görünümünden çıkmak istediğiniz şubenize tıklayınız.
-            Düzenlemek için ise basılı tutunuz.
-          </Text>
-          {/* <Text>{JSON.stringify(branches, null, 2)}</Text> */}
+    <Animated.View
+      className="py-7"
+      entering={FadeInRight.delay(250).duration(250)}
+      exiting={FadeOutRight.duration(500)}>
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <View className="flex-row items-center justify-between px-7">
+          <Text className="font-qs-semibold text-2xl">Şubelerim</Text>
+          <TouchableOpacity activeOpacity={0.75} onPress={handlePresentModalPress}>
+            <Iconify icon="solar:add-circle-line-duotone" size={32} className=" text-slate-400" />
+          </TouchableOpacity>
+          <BranchFormBottomSheet
+            ref={bottomSheetModalRef}
+            onCreate={() => {
+              fetchBranches();
+              bottomSheetModalRef.current?.dismiss();
+            }}
+          />
         </View>
-      ) : (
-        <View className="items-center gap-4 py-7">
-          <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
-          <View className="items-center">
-            <Text className="text-muted-foreground">Henüz bir şube eklememişsiniz.</Text>
-            <Text className="text-muted-foreground">
-              Eklemek isterseniz sağ üstteki artı butonuna tıklayınız.
+        {branches.length > 0 ? (
+          <View className="mt-4 gap-4 px-7">
+            {branches.map((item: any) => (
+              <BranchItem
+                item={item}
+                key={item.id}
+                onUpdate={() => {
+                  fetchBranches();
+                }}
+              />
+            ))}
+            <Text>
+              * Şube görünümüne girmek veya şube görünümünden çıkmak istediğiniz şubenize
+              tıklayınız. Düzenlemek için ise basılı tutunuz.
             </Text>
+            {/* <Text>{JSON.stringify(branches, null, 2)}</Text> */}
           </View>
-        </View>
-      )}
-    </ScrollView>
+        ) : (
+          <View className="items-center gap-4 py-7">
+            <Iconify icon="solar:ghost-bold-duotone" size={48} className="text-slate-400" />
+            <View className="items-center">
+              <Text className="text-muted-foreground">Henüz bir şube eklememişsiniz.</Text>
+              <Text className="text-muted-foreground">
+                Eklemek isterseniz sağ üstteki artı butonuna tıklayınız.
+              </Text>
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </Animated.View>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, ImageBackground} from 'react-native';
+import { View, ImageBackground } from 'react-native';
 
 import { useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,9 +46,7 @@ const Branch = () => {
               source={{ uri: branch?.thumbnail }}
               style={{ aspectRatio: 16 / 9 }}
               className=" w-full justify-between overflow-hidden rounded-3xl p-3.5">
-              <View className="items-end">
-                <WorkingHourBottomSheet />
-              </View>
+              <WorkingHourBottomSheet />
               <View style={{ borderRadius: 10 }} className="w-full gap-2 bg-white p-4">
                 <View className="flex-row items-center justify-between">
                   <Text
@@ -73,7 +71,7 @@ const Branch = () => {
                     <Iconify
                       icon="solar:map-point-wave-bold-duotone"
                       size={24}
-                      className="text-orange-500"
+                      className="text-primary"
                     />
                     <Text>
                       {branch.city}, {branch.country}

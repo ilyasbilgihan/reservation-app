@@ -13,6 +13,8 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 
+import Animated, { FadeInLeft, FadeOutLeft } from 'react-native-reanimated';
+
 const IndividualTabContent = () => {
   const { session } = useGlobalContext();
   const [loading, setLoading] = useState(false);
@@ -122,74 +124,79 @@ const IndividualTabContent = () => {
   }, []);
 
   return (
-    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View className="gap-4">
-        <Text className="text-2xl ">Hesap Bilgilerim</Text>
-        <View className="my-8 items-center gap-3">
-          <TouchableOpacity activeOpacity={0.75} onPress={pickImage}>
-            <Image
-              source={
-                image
-                  ? { uri: Array.isArray(image) ? image[0].uri : image.uri }
-                  : formData.avatar
-                    ? { uri: formData.avatar }
-                    : require('~/assets/no-image.png')
-              }
-              className="h-32 w-32 rounded-full border border-slate-200"
-            />
-          </TouchableOpacity>
-          {formData.avatar || image ? (
-            <TouchableOpacity
-              onPress={() => {
-                setField('avatar', '');
-                setImage(undefined);
-              }}>
-              <Text className="text-destructive">Avatarı Kaldır</Text>
+    <Animated.View
+      className="gap-4 px-7 py-7"
+      entering={FadeInLeft.delay(250).duration(250)}
+      exiting={FadeOutLeft.duration(500)}>
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <View className="gap-4">
+          <Text className="text-2xl ">Hesap Bilgilerim</Text>
+          <View className="my-8 items-center gap-3">
+            <TouchableOpacity activeOpacity={0.75} onPress={pickImage}>
+              <Image
+                source={
+                  image
+                    ? { uri: Array.isArray(image) ? image[0].uri : image.uri }
+                    : formData.avatar
+                      ? { uri: formData.avatar }
+                      : require('~/assets/no-image.png')
+                }
+                className="h-32 w-32 rounded-full border border-slate-200"
+              />
             </TouchableOpacity>
+            {formData.avatar || image ? (
+              <TouchableOpacity
+                onPress={() => {
+                  setField('avatar', '');
+                  setImage(undefined);
+                }}>
+                <Text className="text-destructive">Avatarı Kaldır</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          <View className="gap-1">
+            <Label nativeID="full_name">Ad Soyad</Label>
+            <Input
+              placeholder="Mehmet Yılmaz"
+              value={formData.full_name}
+              onChangeText={(value) => setField('full_name', value)}
+              aria-labelledby="full_name"
+              aria-errormessage="full_name"
+            />
+          </View>
+          <View className="gap-1">
+            <Label nativeID="phone">Telefon</Label>
+            <Input
+              placeholder="+90 555 123 45 67"
+              keyboardType="phone-pad"
+              value={formData.phone}
+              onChangeText={(value) => {
+                setField('phone', value);
+              }}
+              aria-labelledby="phone"
+              aria-errormessage="phone"
+            />
+          </View>
+          <Button onPress={handleProfileUpdate} disabled={loading}>
+            <Text className="text-slate-100">Kaydet</Text>
+          </Button>
+          {!isValidForm() ? (
+            <Text className="text-destructive">
+              * Hesap bilgilerinizi eksiksiz doldurmadığınız sürece rezervasyon alamayacağınızı
+              hatırlatmak isteriz.
+            </Text>
           ) : null}
-        </View>
-        <View className="gap-1">
-          <Label nativeID="full_name">Ad Soyad</Label>
-          <Input
-            placeholder="Mehmet Yılmaz"
-            value={formData.full_name}
-            onChangeText={(value) => setField('full_name', value)}
-            aria-labelledby="full_name"
-            aria-errormessage="full_name"
-          />
-        </View>
-        <View className="gap-1">
-          <Label nativeID="phone">Telefon</Label>
-          <Input
-            placeholder="+90 555 123 45 67"
-            keyboardType="phone-pad"
-            value={formData.phone}
-            onChangeText={(value) => {
-              setField('phone', value);
+          <Button
+            variant="destructive"
+            onPress={() => {
+              supabase.auth.signOut();
             }}
-            aria-labelledby="phone"
-            aria-errormessage="phone"
-          />
+            disabled={loading}>
+            <Text className="text-slate-100">Çıkış Yap</Text>
+          </Button>
         </View>
-        <Button onPress={handleProfileUpdate} disabled={loading}>
-          <Text className="text-slate-100">Kaydet</Text>
-        </Button>
-        {!isValidForm() ? (
-          <Text className="text-destructive">
-            * Hesap bilgilerinizi eksiksiz doldurmadığınız sürece rezervasyon alamayacağınızı
-            hatırlatmak isteriz.
-          </Text>
-        ) : null}
-        <Button
-          variant="destructive"
-          onPress={() => {
-            supabase.auth.signOut();
-          }}
-          disabled={loading}>
-          <Text className="text-slate-100">Çıkış Yap</Text>
-        </Button>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </Animated.View>
   );
 };
 

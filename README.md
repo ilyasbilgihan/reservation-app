@@ -89,6 +89,22 @@ Install, login and configure an EAS project. Then, build it following this [guid
 - Update `tailwind.config.js` to modify theme settings.
 - Edit `app.json` to change app metadata like name, icons, and splash screens.
 
+### Screenshots
+<div style="display: grid; grid-template-columns: 1fr 1fr">
+<img src="/assets/demo/1.jpg" width="314" height="682" />
+<img src="/assets/demo/2.jpg" width="314" height="682" />
+<img src="/assets/demo/3.jpg" width="314" height="682" />
+<img src="/assets/demo/4.jpg" width="314" height="682" />
+<img src="/assets/demo/5.jpg" width="314" height="682" />
+<img src="/assets/demo/6.jpg" width="314" height="682" />
+<img src="/assets/demo/7.jpg" width="314" height="682" />
+<img src="/assets/demo/8.jpg" width="314" height="682" />
+<img src="/assets/demo/9.jpg" width="314" height="682" />
+<img src="/assets/demo/10.jpg" width="314" height="682" />
+<img src="/assets/demo/11.jpg" width="314" height="682" />
+<img src="/assets/demo/12.jpg" width="314" height="682" />
+</div>
+
 ## License
 
 This project is licensed under the MIT License.
